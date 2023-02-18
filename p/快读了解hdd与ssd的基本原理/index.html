@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='快读了解HDD与SSD的基本原理'>
+<title>快读了解HDD与SSD的基本原理</title>
+
+<link rel='canonical' href='https://Kirov7.github.io/p/%E5%BF%AB%E8%AF%BB%E4%BA%86%E8%A7%A3hdd%E4%B8%8Essd%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/'>
+
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='快读了解HDD与SSD的基本原理'>
+<meta property='og:description' content='快读了解HDD与SSD的基本原理'>
+<meta property='og:url' content='https://Kirov7.github.io/p/%E5%BF%AB%E8%AF%BB%E4%BA%86%E8%A7%A3hdd%E4%B8%8Essd%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/'>
+<meta property='og:site_name' content='枫阿雨&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='硬件' /><meta property='article:published_time' content='2022-10-17T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2022-10-17T00:00:00&#43;00:00'/><meta property='og:image' content='http://120.48.87.191:8733/files/69.jpg' />
+<meta name="twitter:title" content="快读了解HDD与SSD的基本原理">
+<meta name="twitter:description" content="快读了解HDD与SSD的基本原理"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='http://120.48.87.191:8733/files/69.jpg' />
+    <link rel="shortcut icon" href="https://img-1307890592.cos.ap-chengdu.myqcloud.com/common%2Ficon.png" />
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-232146632-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_huda4b8bed965e70c74cf5fa7e4b4f3c06_1003367_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🌏</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">枫阿雨&#39;s Blog</a></h1>
+            <h2 class="site-description">&lt;CrazyForCode&gt;</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Kirov7'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/links/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>Links</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://Kirov7.github.io/en/" >English</option>
+                        
+                            <option value="https://Kirov7.github.io/" selected>中文</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#机械硬盘工作原理">机械硬盘工作原理</a></li>
+    <li><a href="#固态硬盘工作原理">固态硬盘工作原理</a>
+      <ol>
+        <li><a href="#写入数据">写入数据</a></li>
+        <li><a href="#读取数据">读取数据</a></li>
+      </ol>
+    </li>
+    <li><a href="#总结">总结</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/%E5%BF%AB%E8%AF%BB%E4%BA%86%E8%A7%A3hdd%E4%B8%8Essd%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/">
+                
+                    <img src="http://120.48.87.191:8733/files/69.jpg" loading="lazy" alt="Featured image of post 快读了解HDD与SSD的基本原理" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/ssd/" >
+                SSD
+            </a>
+        
+            <a href="/categories/hdd/" >
+                HDD
+            </a>
+        
+            <a href="/categories/%E5%AD%98%E5%82%A8/" >
+                存储
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E5%BF%AB%E8%AF%BB%E4%BA%86%E8%A7%A3hdd%E4%B8%8Essd%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/">快读了解HDD与SSD的基本原理</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            快读了解HDD与SSD的基本原理
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Oct 17, 2022</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 4 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="快读了解hdd与ssd的基本原理">快读了解HDD与SSD的基本原理</h1>
+<p>作为MIS专业的小弱鸡，对硬件组成的了解并不深入，而本人正在学习LSM-T结构的存储引擎，发现有些内容一定是要对硬件有所了解之后才能又更好的认知，比如在阅读了LSM-T的经典开山论文后，有了解到LSM-T结构化随机写为顺序写的特性，可以契合HDD的特点可以极大的加快磁盘写入的速度。而在Wiskey论文中，又提出了对SSD友好的KV分离式存储结构，并通过并行读取最大化发挥SSD的优势。逐渐意识到，在软件性能上再多的优化都是建立在硬件之上的，而底层硬件的改变可能对整体的性能产生极大的质变，所以，还是很有必要对存储硬件有些基本的学习与认知。</p>
+<blockquote>
+<p>因为本人有尖端恐惧症，看电子元器件的针脚等精细尖锐的东西会产生比较强烈的生理不适感，故曾经发誓绝对不会去做硬件相关的东西 XD<br>
+本篇文章部分整理自网络资料，供个人学习记录与分享，有任何问题请及时指出，若有侵权立即删除</p>
+</blockquote>
+<h2 id="机械硬盘工作原理">机械硬盘工作原理</h2>
+<p>机械硬盘的内部结构主要由马达、磁盘、磁头臂、磁头组成。</p>
+<p>机械硬盘在工作的时候，磁头会悬浮于磁盘面上方几纳米的距离。磁盘面上有很多的小格子，小格子内有很多的小磁粒。</p>
+<p>这些磁盘上的磁粒有一定的极性，当磁粒极性朝下的时候记为0，磁粒极性朝上的时候记为1，这样磁头就可以通过识别磁盘磁粒的极性读取数据了。</p>
+<p><img src="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/20221122202028.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>而磁头也可以利用其变化的磁场改变磁盘磁粒的极性，这样就做到写入和改写磁盘数据了。</p>
+<p><img src="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/20221122202047.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>为了能够精准定位数据所在磁盘面上的位置，磁盘本身又被划分了无数的扇区和磁道。</p>
+<p><strong>假设：</strong></p>
+<p>数据存放在磁盘的第五磁道的第七扇区上：</p>
+<p><img src="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/640"
+	
+	
+	
+	loading="lazy"
+	
+		alt="图片"
+	
+	
+></p>
+<p>那磁头就会先摆动到第五磁道上空，然后等待第七扇区转过来当第七扇区转到磁头下面的时候，才可以读取数据。</p>
+<p>这就是机械硬盘的工作原理，也正是因为机械硬盘是利用磁性极粒来存储数据的，所以机械硬盘通常又被称作<strong>磁盘</strong>。</p>
+<p>而固态硬盘同机械硬盘的工作原理完全不同，固态硬盘采用<strong>纯电子结构</strong>。</p>
+<h2 id="固态硬盘工作原理">固态硬盘工作原理</h2>
+<p>固态硬盘存储数据的基本单元叫<strong>浮栅晶体管</strong>，基本结构有：存储电子的浮栅层，控制极G、衬底P、源极D与漏极S。</p>
+<p><img src="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/20221122202102.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p><strong>我们将浮栅层中的电子数量高于一定值计为0，低于一定值计为1。</strong></p>
+<p><img src="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/20221122202128.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p><strong>那固态硬盘具体是如何工作的呢？接着往下看。</strong></p>
+<h3 id="写入数据">写入数据</h3>
+<p>写入数据时，需要在控制极G施加一个高压，这样电子就可以穿过隧穿层，进入浮栅层，因为有绝缘层的存在，电子不能再向前移动了，就被囚禁在了浮栅层。</p>
+<p><img src="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/20221122202151.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>而当我们把电压撤去，这些电子依然会被囚禁在浮栅层，因为隧穿层本质上也相当于绝缘体，所以电子们只能被关押着，这样一位数据就被存储进去了。</p>
+<p>**这些电子能被“囚禁”多长时间也就是固态硬盘能够存储数据的年限，一般一块新的固态硬盘能够保存数据的年限为10年。**因为随着时间的流逝，不断地有电子“越狱”成功。</p>
+<p><img src="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/20221122202217.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>等“越狱”的电子多到一定的数量，我们保存的数据就不见了。</p>
+<h3 id="读取数据">读取数据</h3>
+<p>关于它读取数据的原理也非常简单。</p>
+<p>当浮栅层中不存在电子时（存储数据为1），我们给控制级一个低压，由于电压低，电子只能被吸引到靠近隧穿层的位置，却无法穿过隧穿层，因而源极漏极可以导通，形成电流。</p>
+<p><strong>如果检测到电流，那么说明它没有储存电子，则读取数据为1。</strong></p>
+<p><img src="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/20221122202321.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>当浮栅层中存在电子时（存储数据为0），我们还给控制极一个低压，由于浮栅层里面的电子对这些电子有排斥作用，所以电子无法被吸引到靠近隧穿层的位置，源极漏极不会导通，不会形成电流。</p>
+<p><strong>如果无法检测到电流，那么说明浮栅层储存一定量电子，则读取数据为0。</strong></p>
+<p><img src="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/20221122202354.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>无数的浮栅晶体管堆叠在一块就可以存储大量的0和1，它们就类似于图书馆当中的书架一样，存储着无限的0101数据。</p>
+<p>相对于机械硬盘这种机械结构，固态硬盘这种纯电子结构在存取速度方面的优势就非常突出。</p>
+<h2 id="总结">总结</h2>
+<p>在机械硬盘在读取数据之前，需要先摆动磁头臂到对应的磁道上方，再等待对应的扇区转过来。</p>
+<p>尽管目前的机械硬盘大部分都是7200转/分钟或者5400转/分钟的，看起来已经很快了，但是这两个操作依然会导致大约十几毫秒的延迟。</p>
+<p>这种延迟对于人类来讲确实微不足道，但是对于计算机内存和CPU来讲，就确实会产生显著影响。</p>
+<p>而固态硬盘全程都是电子交互，电子信号的速度要远超磁头臂和磁盘这种机械结构。</p>
+<p>如果你的数据是随机分散在磁盘的各个角落，那机械硬盘需要经过多次的寻道和寻址，多次等待扇区转动到磁头底下，所以机械硬盘在读取分散性文件的时候，性能就显得非常弱，速度很慢，即<strong>随机读写性能低下</strong>。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/%E7%A1%AC%E4%BB%B6/">硬件</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.css"integrity="sha256-J&#43;iAE0sgH8QSz9hpcDxXIftnj65JEZgNhGcgReTTK9s="crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.js"integrity="sha256-InsNdER1b2xUewP&#43;pKCUJpkhiqwHgqiPXDlIk7GzBu4="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/contrib/auto-render.min.js"integrity="sha256-y39Mpg7V3D4lhBX4x6O0bUqTV4pSrfgwEfGKfxkOdgI="crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo="Kirov7/Blog-comment"
+        issue-term="pathname"
+        
+        label="none"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2022 - 
+        
+        2023 枫阿雨&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

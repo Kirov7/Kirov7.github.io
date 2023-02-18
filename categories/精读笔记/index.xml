@@ -1,0 +1,708 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>精读笔记 on 枫阿雨&#39;s Blog</title>
+        <link>https://Kirov7.github.io/categories/%E7%B2%BE%E8%AF%BB%E7%AC%94%E8%AE%B0/</link>
+        <description>Recent content in 精读笔记 on 枫阿雨&#39;s Blog</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>zh-cn</language>
+        <lastBuildDate>Sun, 06 Mar 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://Kirov7.github.io/categories/%E7%B2%BE%E8%AF%BB%E7%AC%94%E8%AE%B0/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>精读《Java并发编程的艺术》(四)</title>
+        <link>https://Kirov7.github.io/p/%E7%B2%BE%E8%AF%BBjava%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF%E5%9B%9B/</link>
+        <pubDate>Sun, 06 Mar 2022 00:00:00 +0000</pubDate>
+        
+        <guid>https://Kirov7.github.io/p/%E7%B2%BE%E8%AF%BBjava%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF%E5%9B%9B/</guid>
+        <description>&lt;img src="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/Javaconcurrency.png" alt="Featured image of post 精读《Java并发编程的艺术》(四)" /&gt;&lt;h1 id=&#34;volatile-全解读&#34;&gt;Volatile 全解读&lt;/h1&gt;
+&lt;h2 id=&#34;volatile-的定义&#34;&gt;Volatile 的定义&lt;/h2&gt;
+&lt;p&gt;在多线程并发编程中synchronized和volatile都扮演着重要的角色，volatile是轻量级的synchronized，它在多处理器开发中保证了共享变量的“可见性”。可见性的意思是当一个线程修改一个共享变量时，另外一个线程能读到这个修改的值。如果volatile变量修饰符使用恰当的话，它比synchronized的使用和执行成本更低，因为它不会引起线程上下文的切换和调度。&lt;/p&gt;
+&lt;p&gt;Java语言规范第3版中对volatile的定义如下：Java编程语言允许线程访问共享变量，为了确保共享变量能被准确和一致地更新，线程应该确保通过排他锁单独获得这个变量。Java语言提供了volatile，在某些情况下比锁要更加方便（读多写少）。如果一个字段被声明成volatile，Java线程内存模型确保所有线程看到这个变量的值是一致的。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;保证可见性；
+禁止指令重排序。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/8cfc4044d600e46e7befa11cb614af76.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;截图&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;volatile-的实现原理---可见性&#34;&gt;Volatile 的实现原理 - 可见性&lt;/h2&gt;
+&lt;p&gt;volatile是如何来保证可见性的呢？对volatile进行写操作时，CPU会做什么事情。&lt;/p&gt;
+&lt;p&gt;如 Java代码如下。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;n&#34;&gt;instance&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Singleton&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;                 &lt;span class=&#34;c1&#34;&gt;// instance是volatile变量
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;转变成汇编代码，如下。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;0x01a3de1d: movb $0×0,0×1104800(%esi);
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;0x01a3de24: lock addl $0×0,(%esp);
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;有volatile变量修饰的共享变量进行写操作的时候会多出第二行汇编代码，通过查IA-32架构软件开发者手册可知，Lock前缀的指令在多核处理器下会引发了两件事情。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;1）将当前处理器缓存行的数据写回到系统内存（主存。声言Lock信号）。
+2）这个写回内存的操作会使在其他CPU里缓存了该内存地址的数据无效。&lt;/strong&gt;&lt;/p&gt;
+&lt;br/&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Lock前缀指令会引起处理器缓存回写到内存。Lock前缀指令导致在执行指令期间，声言处理器的LOCK#信号。在多处理器环境中，LOCK#信号确保在声言该信号期间，处理器可以独占任何共享内存（主存只有当前处理器一个人可以访问，锁总线）。但是，&lt;strong&gt;在最近的处理器里，LOCK＃信号一般不锁总线，而是锁缓存，毕竟锁总线开销的比较大。&lt;/strong&gt; 对于Intel486和Pentium处理器，在锁操作时，总是在总线上声言LOCK#信号。但在P6和目前的处理器中，如果访问的内存区域已经缓存在处理器内部，则不会声言LOCK#信号。相反，它会锁定这块内存区域的缓存并回写到内存（总线锁定声言lock信号的，为了提高性能，高级的处理器走的是缓存锁定，改哪里锁定哪里，所以不需要声言lock信号。），并使用缓存一致性机制来确保修改的原子性，此操作被称为“&lt;strong&gt;缓存锁定&lt;/strong&gt;”，缓存一致性机制会阻止同时修改由两个以上处理器缓存的内存区域数据。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;一个处理器的缓存回写到内存会导致其他处理器的缓存无效。IA-32处理器和Intel 64处理器使用MESI（修改、独占、共享、无效）控制协议去维护内部缓存和其他处理器缓存的一致性。在多核处理器系统中进行操作的时候，IA-32和Intel 64处理器能嗅探其他处理器访问系统内存和它们的内部缓存。处理器使用&lt;strong&gt;嗅探技术&lt;/strong&gt;保证它的内部缓存、系统内存和其他处理器的缓存的&lt;strong&gt;数据在总线上保持一致&lt;/strong&gt;。例如，在Pentium和P6 family处理器中，如果通过嗅探一个处理器来检测其他处理器打算写内存地址，而这个地址当前处于共享状态，那么正在嗅探的处理器将使它的缓存行无效，在下次访问相同内存地址时，强制执行缓存行填充。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;volatile可见性原理总结：&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;为了提高处理速度，&lt;strong&gt;处理器不直接和内存进行通信，而是先将系统内存的数据读到内部缓存&lt;/strong&gt;（L1，L2或其他）后再进行操作，但操作完不知道何时会写到内存。如果&lt;strong&gt;对声明了volatile的变量进行写操作，JVM就会向处理器发送一条Lock前缀的指令，将这个变量所在缓存行的数据写回到系统内存&lt;/strong&gt;。但是，就算写回到内存，如果其他处理器缓存的值还是旧的，再执行计算操作就会有问题。所以，在多处理器下，为了保证各个处理器的缓存是一致的，就会&lt;strong&gt;实现缓存一致性协议&lt;/strong&gt;，每&lt;strong&gt;个处理器通过嗅探在总线上传播的数据来检查自己缓存的值是不是过期&lt;/strong&gt;了，当处理器&lt;strong&gt;发现自己缓存行对应的内存地址被修改，就会将当前处理器的缓存行设置成无效状态&lt;/strong&gt;，当处理器对这个数据进行修改操作的时候，会&lt;strong&gt;重新从系统内存中把数据读到处理器缓存里&lt;/strong&gt;。&lt;/p&gt;
+&lt;h2 id=&#34;volatile-使用的优化&#34;&gt;Volatile 使用的优化&lt;/h2&gt;
+&lt;p&gt;著名的Java并发编程大师Doug lea在JDK 7的并发包里新增一个队列集合类Linked-TransferQueue，它在使用volatile变量时，用一种追加字节的方式来优化队列出队和入队的性能。LinkedTransferQueue的代码如下。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;//队列中的头部节点
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;private&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;transient&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;final&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;PaddedAtomicReference&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;QNode&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;head&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;//队列中的尾部节点
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;private&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;transient&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;final&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;PaddedAtomicReference&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;QNode&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;tail&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kd&#34;&gt;static&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;final&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;PaddedAtomicReference&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;extends&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;AtomicReference&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;c1&#34;&gt;//使用很多4个字节的引用追加到64个字节
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;n&#34;&gt;Object&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;p0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;p1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;p2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;p3&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;p4&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;p5&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;p6&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;p7&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;p8&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;p9&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;pa&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;pb&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;pc&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;pd&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;pe&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;n&#34;&gt;PaddedAtomicReference&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;T&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;r&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;kd&#34;&gt;super&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;r&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;AtomicReference&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;V&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;implements&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;java&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;io&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Serializable&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;kd&#34;&gt;private&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;volatile&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;V&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;value&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;c1&#34;&gt;//省略其他代码
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;追加字节能优化性能？这种方式看起来很神奇，但如果深入理解处理器架构就能理解其中的奥秘。让我们先来看看LinkedTransferQueue这个类，它使用一个内部类类型来定义队列的头节点（head）和尾节点（tail），而这个内部类PaddedAtomicReference相对于父类AtomicReference只做了一件事情，就是将共享变量追加到64字节。我们可以来计算下，一个对象的引用占4个字节，它追加了15个变量（共占60个字节），再加上父类的value变量，一共64个字节。&lt;/p&gt;
+&lt;h2 id=&#34;volatile-实现原理---禁止指令重排序&#34;&gt;Volatile 实现原理 - 禁止指令重排序&lt;/h2&gt;
+&lt;p&gt;为了实现volatile的内存语义，编译器在生成字节码时，会在指令序列中插入内存屏障来禁止特定类型的处理器重排序。对于编译器来说，发现一个最优布置来最小化插入屏障的总数几乎不可能。为此，JMM采取保守策略。&lt;/p&gt;
+&lt;p&gt;下面是基于保守策略的JMM内存屏障插入策略。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;在每个volatile&lt;strong&gt;写操作的前面&lt;/strong&gt;插入一个&lt;strong&gt;StoreStore&lt;/strong&gt;屏障。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在每个volatile&lt;strong&gt;写操作的后面&lt;/strong&gt;插入一个&lt;strong&gt;StoreLoad&lt;/strong&gt;屏障。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在每个volatile&lt;strong&gt;读操作的后面&lt;/strong&gt;插入一个&lt;strong&gt;LoadLoad&lt;/strong&gt;屏障。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在每个volatile&lt;strong&gt;读操作的后面&lt;/strong&gt;插入一个&lt;strong&gt;LoadStore&lt;/strong&gt;屏障。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;上述内存屏障插入策略非常保守，但它可以保证在任意处理器平台，任意的程序中都能得到正确的volatile内存语义。&lt;/p&gt;
+&lt;br/&gt;
+&lt;p&gt;如图：StoreStore屏障可以保证在volatile写之前，其前面的所有普通写操作已经对任意处理器可见了。这是因为StoreStore屏障将保障上面所有的普通写在volatile写之前刷新到主内存。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/201f8f17656a670fa90994eeed14edf5.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;截图&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;这里比较有意思的是，volatile写后面的StoreLoad屏障。此屏障的作用是避免volatile写与后面可能有的volatile读/写操作重排序。因为编译器常常无法准确判断在一个volatile写的后面是否需要插入一个StoreLoad屏障（比如，一个volatile写之后方法立即return）。&lt;strong&gt;为了保证能正确实现volatile的内存语义，JMM在采取了保守策略：在每个volatile写的后面&lt;/strong&gt;，&lt;del&gt;或者在每个volatile读的前面&lt;/del&gt; &lt;strong&gt;插入一个StoreLoad屏障&lt;/strong&gt;。&lt;strong&gt;从整体执行效率的角度考虑，JMM最终选择了在每个volatile写的后面插入一个StoreLoad屏障&lt;/strong&gt;。&lt;strong&gt;因为volatile写-读内存语义的常见使用模式是：一个写线程写volatile变量，多个读线程读同一个volatile变量。&lt;/strong&gt; 当读线程的数量大大超过写线程时，选择在volatile写之后插入StoreLoad屏障将带来可观的执行效率的提升。从这里可以看到JMM在实现上的一个特点：&lt;strong&gt;首先确保正确性，然后再去追求执行效率&lt;/strong&gt;。&lt;/p&gt;
+&lt;br/&gt;
+&lt;p&gt;图中的LoadLoad屏障用来禁止处理器把上面的volatile读与下面的普通读重排序。LoadStore屏障用来禁止处理器把上面的volatile读与下面的普通写重排序。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/3e5e1212181221a5a85127a22fe906cf.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;截图&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;上述volatile写和volatile读的内存屏障插入策略非常保守。在实际执行时，只要不改变volatile写-读的内存语义，编译器可以根据具体情况省略不必要的屏障。下面通过具体的示例代码进行说明。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kd&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;VolatileBarrierExample&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;a&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;kd&#34;&gt;volatile&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;v1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;kd&#34;&gt;volatile&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;v2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;readAndWrite&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;v1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;//第一个volatile读
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;j&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;v2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;//第二个volatile读
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;a&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;j&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;//普通写
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;v1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;//第一个volatile写
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;v2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;j&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;//第二个volatile写
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;o&#34;&gt;...&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;//其他方法
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/5d46837ff8fdcff20412469456f9956d.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;截图&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;br/&gt;
+&lt;h2 id=&#34;jsr-133增强volatile的内存语义&#34;&gt;JSR-133增强volatile的内存语义&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/11a82582e16a251bbdd77c6532e3e494.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;截图&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;当第二个操作是volatile写时，不管第一个操作是什么，都不能重排序。这个规则确保volatile写之前的操作不会被编译器重排序到volatile写之后。&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;当第一个操作是volatile读时，不管第二个操作是什么，都不能重排序。这个规则确保volatile读之后的操作不会被编译器重排序到volatile读之前。&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;当第一个操作是volatile写，第二个操作是volatile读时，不能重排序。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;在JSR-133之前的旧Java内存模型中，虽然不允许volatile变量之间重排序，但旧的Java内存模型允许volatile变量与普通变量重排序。这样会产生问题。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/7dbbf2f6971b6b2c076e1628ff01b4e4.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;截图&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/6175e55461d86a8ff60df5322a3e1054.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;截图&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;在旧的内存模型中，当1和2之间没有数据依赖关系时，1和2之间就可能被重排序（3和4类似）。其结果就是：读线程B执行4时，不一定能看到写线程A在执行1时对共享变量的修改。&lt;/p&gt;
+&lt;h2 id=&#34;未使用-volatile-下的双重检查锁&#34;&gt;未使用 Volatile 下的双重检查锁&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/c3fe2d403cc0161d26b49cb4baedebf2.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;截图&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/e6dd888a2f11cfb8109d0ff4cd328aa5.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;截图&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;基于-volatile-的解决方案&#34;&gt;基于 Volatile 的解决方案&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/1d27a9989c6448fe04d4c94272235c3e.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;截图&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;大众式的讲解。因为面试过程中，绝大多数面试官都认为是volatile禁止了 new 对象里边三行代码的重排序。
+因为new instance 他是一个 JVM 指令码，对应的是 new 指令。 Volatile能够保障单个JVM 指令的原子性，所以此处， &lt;strong&gt;new instace相当于是volatiole写&lt;/strong&gt;，&lt;strong&gt;会在 new instance前加 storestore，后加storeload屏障，b线程就必须在storeload 屏障后边读取&lt;/strong&gt;。（不建议面试使用。）实质上，new对象里边的三个小步骤，依然可以重排序，真正的控制是在外层的内存屏障控制。&lt;/p&gt;
+&lt;h2 id=&#34;基于类初始化的解决方案&#34;&gt;基于类初始化的解决方案&lt;/h2&gt;
+&lt;p&gt;JVM在类的初始化阶段（即在Class被加载后，且被线程使用之前），会执行类的初始化。&lt;strong&gt;在执行类的初始化期间，JVM会去获取一个锁&lt;/strong&gt;。这个锁可以同步多个线程对同一个类的初始化。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/fa45697037d57f5a8f5520c95f24c950.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;截图&#34;
+	
+	
+&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>精读《Java并发编程的艺术》(三)</title>
+        <link>https://Kirov7.github.io/p/%E7%B2%BE%E8%AF%BBjava%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF%E4%B8%89/</link>
+        <pubDate>Mon, 21 Feb 2022 00:00:00 +0000</pubDate>
+        
+        <guid>https://Kirov7.github.io/p/%E7%B2%BE%E8%AF%BBjava%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF%E4%B8%89/</guid>
+        <description>&lt;img src="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/Javaconcurrency.png" alt="Featured image of post 精读《Java并发编程的艺术》(三)" /&gt;&lt;h1 id=&#34;java内存模型---jmm&#34;&gt;Java内存模型 - JMM&lt;/h1&gt;
+&lt;h2 id=&#34;java内存模型技术&#34;&gt;Java内存模型技术&lt;/h2&gt;
+&lt;p&gt;Java的并发采用的是共享内存模型，Java线程之间的通信总是隐式进行，整个通信过程对程序员完全透明。&lt;/p&gt;
+&lt;p&gt;在Java中，所有实例域、静态域和数组元素都存储在堆内存中，堆内存在线程之间共享（“共享变量”这个术语代指实例域，静态域和数组元素）。局部变量（Local Variables），方法定义参数（Java语言规范称之为Formal Method Parameters）和异常处理器参数（Exception Handler Parameters）不会在线程之间共享，它们不会有内存可见性问题，也不受内存模型的影响。&lt;/p&gt;
+&lt;p&gt;Java线程之间的通信由Java内存模型（本文简称为JMM）控制，JMM决定一个线程对共享变量的写入何时对另一个线程可见。从抽象的角度来看，JMM定义了线程和主内存之间的抽象关系：线程之间的共享变量存储在主内存（Main Memory）中，每个线程都有一个私有的本地内存（Local Memory），本地内存中存储了该线程以读/写共享变量的副本。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/980d5d9e76d066f5ab71aec43658e7df.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;截图&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;指令重排序&#34;&gt;指令重排序&lt;/h2&gt;
+&lt;p&gt;在执行程序时，为了提高性能，编译器和处理器常常会对指令做重排序。重排序分3种类型。&lt;/p&gt;
+&lt;p&gt;1）编译器优化的重排序。编译器在&lt;strong&gt;不改变单线程程序语义&lt;/strong&gt;的前提下，可以重新安排语句的执行顺序。
+2）指令级&lt;strong&gt;并行&lt;/strong&gt;的重排序。现代处理器采用了指令级并行技术（Instruction-Level Parallelism，ILP）来将多条指令重叠执行。如果不存在数据依赖性，处理器可以改变语句对应机器指令的执行顺序。
+3）内存系统的重排序。由于处理器使用缓存和读/写缓冲区，这使得加载和存储操作看上去可能是在乱序执行。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/88cc1dd68b863112013f0f5288979aa7.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;截图&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;对于处理器重排序，JMM的处理器重排序规则会要求  &lt;strong&gt;Java编译器&lt;/strong&gt; 在生成指令序列时，插入特定类型的&lt;strong&gt;内存屏障&lt;/strong&gt;（Memory Barriers，Intel称之为Memory Fence）指令，通过内存屏障指令来禁止特定类型的处理器重排序。&lt;/p&gt;
+&lt;p&gt;JMM属于语言级的内存模型，它确保在不同的编译器和不同的处理器平台之上，通过禁止特定类型的编译器重排序和处理器重排序，为程序员提供一致的内存可见性保证。&lt;/p&gt;
+&lt;h2 id=&#34;内存屏障&#34;&gt;内存屏障&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/96f7b943fcc0dfc86cdc594e25c758fc.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;截图&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;StoreLoad Barriers&lt;/strong&gt;是一个“全能型”的屏障，它同时具有其他3个屏障的效果。执行该屏障开销会很昂贵，因为当前处理器通常要把&lt;strong&gt;写缓冲区中的数据全部刷新到内存中&lt;/strong&gt;（Buffer Fully Flush）。&lt;/p&gt;
+&lt;h2 id=&#34;happen-before-原则&#34;&gt;Happen-Before 原则&lt;/h2&gt;
+&lt;p&gt;happens-before是JMM最核心的概念。对应Java程序员来说，理解happens-before是理解JMM的关键。&lt;/p&gt;
+&lt;p&gt;从JDK 5开始，Java使用新的JSR-133内存模型。JSR-133使用happens-before的概念来阐述操作之间的内存可见性。在JMM中，如果一个操作执行的结果需要对另一个操作可见，那么这两个操作之间必须要存在happens-before关系。这里提到的两个操作既可以是在一个线程之内，也可以是在不同线程之间。&lt;/p&gt;
+&lt;p&gt;与程序员密切相关的happens-before规则如下。
+1）程序顺序规则：一个线程中的每个操作，happens-before于该线程中的任意后续操作。
+2）监视器锁规则：对一个锁的解锁，happens-before于随后对这个锁的加锁。
+3）volatile变量规则：对一个volatile域的写，happens-before于任意后续对这个volatile域的读。
+4）传递性：如果A happens-before B，且B happens-before C，那么A happens-before C。
+5）start()规则：如果线程A执行操作ThreadB.start()（启动线程B），那么A线程的ThreadB.start()操作happens-before于线程B中的任意操作。
+6）join()规则：如果线程A执行操作ThreadB.join()并成功返回，那么线程B中的任意操作happens-before于线程A从ThreadB.join()操作成功返回。&lt;/p&gt;
+&lt;p&gt;两个操作之间具有happens-before关系，并不意味着前一个操作必须要在后一个操作之前执行！happens-before仅仅要求前一个操作（执行的结果）对后一个操作可见，且前一个操作按顺序排在第二个操作之前&lt;/p&gt;
+&lt;h2 id=&#34;as-if-serial语义&#34;&gt;as-if-serial语义&lt;/h2&gt;
+&lt;p&gt;as-if-serial语义的意思是：不管怎么重排序（编译器和处理器为了提高并行度），（&lt;strong&gt;单线程&lt;/strong&gt;）程序的执行结果不能被改变。编译器、runtime和处理器都必须遵守as-if-serial语义。&lt;/p&gt;
+&lt;p&gt;为了遵守as-if-serial语义，编译器和处理器不会对存在数据依赖关系的操作做重排序，因为这种重排序会改变执行结果。但是，如果操作之间不存在数据依赖关系，这些操作就可能被编译器和处理器重排序。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;happens-before关系本质上和as-if-serial语义是一回事。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;as-if-serial语义保证单线程内程序的执行结果不被改变，happens-before关系保证正确同步的多线程程序的执行结果不被改变。
+as-if-serial语义给编写单线程程序的程序员创造了一个幻境：单线程程序是按程序的顺序来执行的。happens-before关系给编写正确同步的多线程程序的程序员创造了一个幻境：正确同步的多线程程序是按happens-before指定的顺序来执行的。
+as-if-serial语义和happens-before这么做的目的，都是为了在不改变程序执行结果的前提下，尽可能地提高程序执行的并行度。&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id=&#34;锁的获取与释放的内存语义&#34;&gt;锁的获取与释放的内存语义&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kd&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;MonitorExample&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;a&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;synchronized&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;writer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;　　　　 &lt;span class=&#34;c1&#34;&gt;// 1
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;        &lt;span class=&#34;n&#34;&gt;a&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;++;&lt;/span&gt;　　　　　　　　　　                &lt;span class=&#34;c1&#34;&gt;// 2
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;　　　　　　　　　　　　                   &lt;span class=&#34;c1&#34;&gt;// 3
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;synchronized&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;reader&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;　　　   &lt;span class=&#34;c1&#34;&gt;// 4
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;        &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;a&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;　　　　　　　　              &lt;span class=&#34;c1&#34;&gt;// 5
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;        &lt;span class=&#34;err&#34;&gt;……&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;　　　　　　　　　　　　                   &lt;span class=&#34;c1&#34;&gt;// 6
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;线程A释放一个锁，实质上是线程A向接下来将要获取这个锁的某个线程发出了（线程A对&lt;strong&gt;共享变量所做修改&lt;/strong&gt;的）消息。&lt;/li&gt;
+&lt;li&gt;线程B获取一个锁，实质上是线程B接收了之前某个线程发出的（在释放这个锁之前对共享变量所做修改的）消息。&lt;/li&gt;
+&lt;li&gt;线程A释放锁，随后线程B获取这个锁，这个过程实质上是线程A通过主内存向线程B发送消息。（&lt;strong&gt;隐式通信&lt;/strong&gt;）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+</description>
+        </item>
+        <item>
+        <title>精读《Java并发编程的艺术》(二)</title>
+        <link>https://Kirov7.github.io/p/%E7%B2%BE%E8%AF%BBjava%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF%E4%BA%8C/</link>
+        <pubDate>Tue, 08 Feb 2022 00:00:00 +0000</pubDate>
+        
+        <guid>https://Kirov7.github.io/p/%E7%B2%BE%E8%AF%BBjava%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF%E4%BA%8C/</guid>
+        <description>&lt;img src="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/Javaconcurrency.png" alt="Featured image of post 精读《Java并发编程的艺术》(二)" /&gt;&lt;h1 id=&#34;synchronized-全解读&#34;&gt;synchronized 全解读&lt;/h1&gt;
+&lt;h2 id=&#34;synchronized的特性&#34;&gt;Synchronized的特性&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;有序性&lt;/p&gt;
+&lt;p&gt;读读、写写、写读、读写 都是互斥的，只有一条线程拿到当前的锁，当前锁不释放，其他线程只能处于BLOCK状态，等待锁的释放，然后加入下一步的竞争&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;可见性&lt;/p&gt;
+&lt;p&gt;完全排他&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;原子性&lt;/p&gt;
+&lt;p&gt;本质上是线程互斥保证的原子性&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;可重入性&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;br/&gt;
+&lt;h2 id=&#34;synchronized锁升级---mark-word32bit&#34;&gt;Synchronized锁升级 - Mark Word（32bit）&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/2654f92ba41f65199f03211c67f7397c.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;截图&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;synchronized锁升级---偏向锁&#34;&gt;Synchronized锁升级 - 偏向锁&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;至少JDK1.6 版本且开启了偏向锁配置。
+偏向锁在Java 6和Java 7里是默认启用的，但是它在应用程序启动几秒钟之后才激活，如有必要可以使用JVM参数来关闭延迟：-XX:BiasedLockingStartupDelay=0。如果你确定应用程序里所有的锁通常情况下处于竞争状态，可以通过JVM参数关闭偏向锁：-XX:-UseBiasedLocking=false，那么程序默认会进入轻量级锁状态。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;被加锁的对象，没有真正、或者隐式的调用父类 Object 里边的hashcode方法。&lt;/p&gt;
+&lt;p&gt;如果一旦调用了object的hashcode方法，那么我们的对象头里边就有真正的hashcode值了，如果偏向锁来进行markword的替换，至少要提供一个保存hashcode的地方吧？可惜的是，偏向锁并没有地方进行markword的保存，只有轻量级锁才会有“displace mark word”&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;为了让线程获得锁的代价更低而引入了偏向锁。当一个线程访问同步块并获取锁时，会在&lt;strong&gt;对象头&lt;/strong&gt;（存储线程id）
+&lt;strong&gt;和栈帧中的锁记录里&lt;/strong&gt;（线程有自己的栈帧，LOCK RECORD: 存储当前线程id）
+存储锁偏向的线程ID，以后该线程在进入和退出同步块时不需要进行CAS操作来加锁和解锁，只需简单地测试一下对象头的Mark Word里是否存储着指向
+&lt;strong&gt;当前线程的偏向锁。&lt;/strong&gt;（id的匹配）
+如果测试成功，表示线程已经获得了锁。如果测试失败，则需要再测试一下Mark Word中偏向锁的标识是否设置成1（表示当前是偏向锁）：如果没有设置，则使用CAS竞争锁；如果设置了，则尝试使用CAS将对象头的
+&lt;strong&gt;偏向锁指向当前线程&lt;/strong&gt;（ 其实是cas竞争替换 线程id）。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;注：相当于给每个每个对象固定“偏向”某个线程，没有竞争时只需要线程确认栈内记录的身份是否还偏向自己，如果身份还是匹配，则不需要真正的加锁。如果mark word中偏向的线程不是自己，则检测是否是偏向锁，如果不是则CAS锁升级争夺轻量级锁。如果目标是偏向锁，则用CAS更改mark word中偏向的线程&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;synchronized锁升级---偏向锁的撤销&#34;&gt;Synchronized锁升级 - 偏向锁的撤销&lt;/h2&gt;
+&lt;p&gt;偏向锁使用了一种等到竞争出现才释放锁的机制，一旦有竞争则升级到轻量级锁（简单且不严谨的说法）&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;偏向锁使用了一种等到竞争出现才释放锁的机制&lt;/strong&gt;，所以当其他线程尝试竞争偏向锁时，持有偏向锁的线程才会释放锁。偏向锁的撤销，需要等待全局安全点（在这个时间点上没有正在执行的字节码）。它会首先暂停拥有偏向锁的线程，然后检查持有偏向锁的线程是否活着，如果线程不处于活动状态，则将对象头设置成无锁状态；如果线程仍然活着，拥有偏向锁的栈会被执行，遍历偏向对象的锁记录，栈中的锁记录和对象头的Mark Word要么重新偏向于其他线程，要么恢复到无锁或者标记对象不适合作为偏向锁，最后唤醒暂停的线程。 （包括锁不升级时的严谨说法）&lt;/p&gt;
+&lt;br/&gt;
+&lt;ol&gt;
+&lt;li&gt;A线程获取偏向锁，并且A线程死亡退出。B线程争抢偏向锁，会直接升级当前对象的锁为轻量级锁。这只是针对我们争抢了一次。&lt;/li&gt;
+&lt;li&gt;A线程获取偏向锁，并且A线程没有释放偏向锁（），还在syhnc的代码块里边。B线程此时过来争抢偏向锁，会直接升级为重量级锁。&lt;/li&gt;
+&lt;li&gt;A线程获取偏向锁，并且A线程释放了锁，但是A线程并没有死亡还在活跃状态。B线程过来争抢，会直接升级为轻量级锁。
+综上所述，当我们尝试第一次竞争偏向锁时，如果A线程已经死亡，升级为轻量级锁；如果A线程未死亡，并且未释放锁，直接升级为重量级锁；如果A线程未死亡，并且已经释放了锁，直接升级为轻量级锁。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;A线程获取偏向锁，并且A线程没有释放偏向锁（），还在syhnc的代码块里边。B线程多次争抢锁，会在加锁过程中采用重量级锁；但是，一旦锁被释放，当前对象还是会以轻量级锁的初始状态执行。&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;A线程获取偏向锁，并且A线程释放了锁，但是A线程并没有死亡还在活跃状态。B线程过来争抢。部分争抢会升级为轻量级锁；部分争抢会依旧保持偏向锁。&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;br/&gt;
+&lt;h2 id=&#34;synchronized锁升级---偏向锁的重偏向与批量撤销&#34;&gt;Synchronized锁升级 - 偏向锁的重偏向与批量撤销&lt;/h2&gt;
+&lt;p&gt;偏向锁状态变化与最终升级为轻量级锁：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;A 线程获取偏向锁成功，已经退出执行不再是活跃线程； B线程过来获取偏向锁，默认前20次直接升级为轻量级锁 （触发批量重偏向阈值之前， 默认为 20次争抢，不同机器环境参数配置不一样）；&lt;/li&gt;
+&lt;li&gt;A 线程获取偏向锁成功，已经退出执行不再是活跃线程； B线程过来获取偏向锁，默认20次以后，直接偏向线程 B。达到40次阈值后，若再有其他线程C过来争抢，则触发批量撤销。该对象不再有任何偏向锁的情况。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;批量重偏向：&lt;/strong&gt; 当我们的一个对象，Object 类，在经过&lt;strong&gt;默认 20次&lt;/strong&gt;的争抢的情况下，会将后边的所有争抢从新偏向争抢的线程。当B线程争抢第 18 次的时候，触发了批量重偏向的阈值；在第20次以及以后的争抢里，jvm会将线程偏向线程b，因为jvm认为，这个对象更加适合线程B&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;批量撤销：&lt;/strong&gt; 如果基于批量重偏向的基础上，还在继续进行争抢达到40次，并且有第三条线程C加入了，这个时候会触发批量撤销。JVM会标记该对象不能使用偏向锁，以后新创建的对象，直接以轻量级锁开始。 这个时候，才是真正的完成了锁升级。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;真正的锁升级，是依赖于 class 的（加锁对象实例对应的类），而并不是依赖于 某一个 new出来的对象（偏向锁升级为轻量级锁）。&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id=&#34;synchronized锁升级---轻量级锁加锁与解除&#34;&gt;Synchronized锁升级 - 轻量级锁加锁与解除&lt;/h2&gt;
+&lt;p&gt;（1）轻量级锁加锁
+线程在执行同步块之前，JVM会先在当前线程的栈桢中创建用于存储锁记录的空间（Lock Record记录），并将对象头中的Mark Word（前30位 （25位的hashcode，4位的分代年龄，1位是否为偏向锁））复制到锁记录中，官方称为Displaced Mark Word。然后线程尝试使用CAS将对象头中的Mark Word替换为指向锁记录的指针（指向线程栈帧里边的Lock Record的指针）。如果成功，当前线程获得锁，如果失败，表示其他线程竞争锁，当前线程便尝试使用&lt;font color=red&gt;&lt;strong&gt;自旋&lt;/strong&gt;&lt;/font&gt;来获取锁。&lt;/p&gt;
+&lt;p&gt;（2）轻量级锁解锁
+轻量级解锁时，会使用原子的CAS操作将Displaced Mark Word（Lock Record记录）替换回到对象头，如果成功，则表示没有竞争发生。如果失败，表示当前锁存在竞争，锁就会膨胀成重量级锁。&lt;/p&gt;
+&lt;p&gt;轻量级锁升级为重量级锁：这个时候，只要我们的线程发生了竞争，并且CAS替换失败，就会发起锁膨胀，升级为重量级锁（针对的是一个对象实例）&lt;/p&gt;
+&lt;h2 id=&#34;synchronized锁升级---轻量级锁升级为重量级锁&#34;&gt;Synchronized锁升级 - 轻量级锁升级为重量级锁&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/e778fea7130be50e20d80f744622e3c6.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;截图&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;轻量级锁&amp;mdash;重量级锁： 释放锁（前四步）并唤醒等待线程&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;线程1 初始化monitor 对象；&lt;/li&gt;
+&lt;li&gt;将状态设置为膨胀中（inflating）；&lt;/li&gt;
+&lt;li&gt;将monitor里边的header属性，set称为对象的markword；（将自己lock record里边的存放的mark word的hashcode，分代年龄，是否为偏向锁 set 到 objectmonitor对象的header属性里）&lt;/li&gt;
+&lt;li&gt;设置对象头为重量级锁状态（标记为改为00）；然后将前30位指向第1步初始化的monitor 对象；（真正的锁升级是由线程1操控的）&lt;/li&gt;
+&lt;li&gt;唤醒线程2；&lt;/li&gt;
+&lt;li&gt;线程2 开始争抢重量级锁。（线程2就干了一件事儿，就是弄了一个临时的重量级锁指针吧？还不是最后的重量级锁指针。因为最后的重量级锁指针是线程1初始化的并且是线程1修改的。 而且，线程2被唤醒之后，还不一定能够抢到这个重量级锁。Sync是非公平锁。 线程2费力不讨好，但是线程2做了一件伟大的事情：他是锁升级的奠基者。）&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;synchronized锁升级---markword转化过程重难点&#34;&gt;Synchronized锁升级 - Markword转化过程（重难点）&lt;/h2&gt;
+&lt;p&gt;创建一个对象，此时对象里边没有hashcode，所以该对象可以使用我们的偏向锁，偏向锁不会考虑hashcode，
+他会直接&lt;strong&gt;将自己的线程id放到我们的markword里边&lt;/strong&gt;，不需要考虑后续的替换问题。 所以呢，一旦我们的对象主动调用了Object的hashcode方法，我们的偏向锁就自动不可用了。&lt;/p&gt;
+&lt;p&gt;如果我们的对象有了hashcode和分代年龄和是否为偏向锁（30位）。在轻量级锁的状态下，&lt;strong&gt;这30位会被复制到我们的轻量级锁线程持有者的栈帧里的lock record里边记录&lt;/strong&gt;。与此同时，我们的&lt;strong&gt;对象的markword里边存放的是我们的指向轻量级锁线程持有者的栈帧的lock recod里&lt;/strong&gt;。如果一直存在轻量级锁竞争，在未发生锁膨胀的前提下，一直会保持轻量级锁，&lt;strong&gt;A线程释放的时候，会将markword替换回对象的markword里边&lt;/strong&gt;，B线程下次再从新走一遍displace mark word；&lt;/p&gt;
+&lt;p&gt;一旦发生了轻量级膨胀为重量级锁。前提，A线程持有锁；B线程争抢。
+B线程将marikword里边A线程的指针替换成一个临时的（过渡的）重量级锁指针，为了让A线程在cas往回替换markword的时候失败。
+A线程替换回markword失败后，会发起：1.初始化monitor对象；2. 将状态设置为膨胀中；3 &lt;strong&gt;将替换失败的 markword 放到 objectmonitr o的head属性里&lt;/strong&gt;； 4。改变markword的锁标志为10；将markword里的 30 位设置为指向自己第一步初始化的那个monitor对象；5唤醒B线程； 6以后这个对象只能作为重量级锁；&lt;/p&gt;
+&lt;p&gt;Markword从未丢失。&lt;/p&gt;
+&lt;h2 id=&#34;死锁---产生条件与避免&#34;&gt;死锁 - 产生条件与避免&lt;/h2&gt;
+&lt;p&gt;（学院派的严谨理论）&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;死锁产生的四个必要条件：&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;互斥：一个资源每次只能被一个进程使用 (资源独立)。&lt;/li&gt;
+&lt;li&gt;请求与保持：一个进程因请求资源而阻塞时，对已获得的资源保持不放 (不释放锁)。&lt;/li&gt;
+&lt;li&gt;不剥夺：进程已获得的资源，在未使用之前，不能强行剥夺 (抢夺资源)。&lt;/li&gt;
+&lt;li&gt;循环等待：若干进程之间形成一种头尾相接的循环等待的资源关闭 (死循环)。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;如何避免死锁：&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;破坏” 互斥” 条件：系统里取消互斥、若资源一般不被一个进程独占使用，那么死锁是肯定不会发生的，但一般 “互斥” 条件是无法破坏的，因此，在死锁预防里主要是破坏其他三个必要条件，而不去涉及破坏 “互斥” 条件。&lt;/li&gt;
+&lt;li&gt;破坏 “请求和保持” 条件：
+方法 1：所有的进程在开始运行之前，必须一次性的申请其在整个运行过程各种所需要的全部资源。
+优点：简单易实施且安全。
+缺点：因为某项资源不满足，进程无法启动，而其他已经满足了的资源也不会得到利用，严重降低了资源的利用率，造成资源浪费。
+方法 2：该方法是对第一种方法的改进，允许进程只获得运行初期需要的资源，便开始运行，在运行过程中逐步释放掉分配到，已经使用完毕的资源，然后再去请求新的资源。这样的话资源的利用率会得到提高，也会减少进程的饥饿问题。&lt;/li&gt;
+&lt;li&gt;破坏 “不剥夺” 条件：当一个已经持有了一些资源的进程在提出新的资源请求没有得到满足时，它必须释放已经保持的所有资源，待以后需要使用的时候再重新申请。这就意味着进程已占有的资源会被短暂的释放或者说被抢占了。&lt;/li&gt;
+&lt;li&gt;破坏 “循环等待” 条件：可以通过定义资源类型的线性顺序来预防，可以将每个资源编号，当一个进程占有编号为 i 的资源时，那么它下一次申请资源只能申请编号大于 i 的资源。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;（简易说法）&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;避免死锁的几个常见方法：&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;避免一个线程同时获取多个锁。&lt;/li&gt;
+&lt;li&gt;避免一个线程在锁内同时占用多个资源，尽量保证每个锁只占用一个资源。&lt;/li&gt;
+&lt;li&gt;尝试使用定时锁，使用lock.tryLock（timeout）来替代使用内部锁机制。&lt;/li&gt;
+&lt;li&gt;对于数据库锁，加锁和解锁必须在一个数据库连接里（分布式数据库），否则会出现解锁失败的情况。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;objectmonitor的五个重要属性&#34;&gt;ObjectMonitor的五个重要属性&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;header ： 重量级锁保存markword的地方&lt;/li&gt;
+&lt;li&gt;own: 指向我们持有锁的线程；对象的markword里边也保存了指向monitor的指针；&lt;/li&gt;
+&lt;li&gt;_cxq 队列： 竞争队列。 A线程持有锁没有释放； B和C线程同时过来争抢锁，都被block了，此时会将B和C线程加入到 该队列。&lt;/li&gt;
+&lt;li&gt;EntryList队列：同步队列。A线程释放锁，B和C线程中会选定一个继承者（可以去争抢锁的这个线程），另外一个线程会被放入我们的EntryList队列里边。&lt;/li&gt;
+&lt;li&gt;waitset：等待队列。Object wait的线程。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;A线程持有锁，BC线程过来竞争失败，进入cxq &amp;ndash; 下轮竞争会把 cxq里的线程移动到EntrylIst中。假设B线程竞争到了锁，然后B线程调用了 Object.Wait方法，这时候B线程进入waitset，并释放锁。C线程拿到了锁，然后唤醒B线程。B线程会从waitset里边出来，直接竞争锁。如果竞争失败进入cxq，继续轮回，如果竞争成功，ok了。&lt;/p&gt;
+&lt;h2 id=&#34;cpu的用户态与内核态&#34;&gt;CPU的用户态与内核态&lt;/h2&gt;
+&lt;p&gt;CPU 的两种工作状态：内核态（管态）和用户态（目态）。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;内核态：&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;系统中既有操作系统的程序，也有普通用户程序。为了安全性和稳定性，操作系统的程序不能随便访问，这就是内核态。即需要执行操作系统的程序就必须转换到内核态才能执行！&lt;/li&gt;
+&lt;li&gt;内核态可以使用计算机所有的硬件资源！&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;用户态：&lt;/strong&gt;
+不能直接使用系统资源，也不能改变 CPU 的工作状态，并且只能访问这个用户程序自己的存储空间！&lt;/p&gt;
+&lt;p&gt;当一个进程在执行用户自己的代码时处于用户运行态（用户态），此时特权级最低，为 3 级，是普通的用户进程运行的特权级，大部分用户直接面对的程序都是运行在用户态。Ring3 状态不能访问 Ring0 的地址空间，包括代码和数据；当一个进程因为系统调用陷入内核代码中执行时处于内核运行态（内核态），此时特权级最高，为 0 级。执行的内核代码会使用当前进程的内核栈，每个进程都有自己的内核栈。&lt;/p&gt;
+&lt;p&gt;用户运行一个程序，该程序创建的进程开始时运行自己的代码，处于用户态。如果要执行文件操作、网络数据发送等操作必须通过 write、send 等系统调用，这些系统调用会调用内核的代码。进程会切换到 Ring0，然后进入内核地址空间去执行内核代码来完成相应的操作。内核态的进程执行完后又会切换到 Ring3，回到用户态。这样，用户态的程序就不能随意操作内核地址空间，具有一定的安全保护作用。这说的保护模式是指通过内存页表操作等机制，保证进程间的地址空间不会互相冲突，一个进程的操作不会修改另一个进程地址空间中的数据。&lt;/p&gt;
+&lt;h2 id=&#34;用户态与内核态切换的触发条件&#34;&gt;用户态与内核态切换的触发条件&lt;/h2&gt;
+&lt;p&gt;当在系统中执行一个程序时，大部分时间是运行在用户态下的，在其需要操作系统帮助完成一些用户态自己没有特权和能力完成的操作时就会切换到内核态。
+用户态切换到内核态的 3 种方式
+（1）系统调用
+这是用户态进程主动要求切换到内核态的一种方式。用户态进程通过系统调用申请使用操作系统提供的服务程序完成工作。例如 fork（）就是执行了一个创建新进程的系统调用。系统调用的机制是使用了操作系统为用户特别开放的一个中断来实现，如 Linux 的 int 80h 中断。
+（2）异常
+当 cpu 在执行运行在用户态下的程序时，发生了一些没有预知的异常，这时会触发由当前运行进程切换到处理此异常的内核相关进程中，也就是切换到了内核态，如缺页异常。
+（3）外围设备的中断
+当外围设备完成用户请求的操作后，会向 CPU 发出相应的中断信号，这时 CPU 会暂停执行下一条即将要执行的指令而转到与中断信号对应的处理程序去执行，如果前面执行的指令时用户态下的程序，那么转换的过程自然就会是 由用户态到内核态的切换。如硬盘读写操作完成，系统会切换到硬盘读写的中断处理程序中执行后边的操作等。&lt;/p&gt;
+&lt;p&gt;这三种方式是系统在运行时由用户态切换到内核态的最主要方式，其中系统调用可以认为是用户进程主动发起的，异常和外围设备中断则是被动的。从触发方式上看，切换方式都不一样，但从最终实际完成由用户态到内核态的切换操作来看，步骤有事一样的，都相当于执行了一个中断响应的过程。系统调用实际上最终是中断机制实现的，而异常和中断的处理机制基本一致。&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>精读《Java并发编程的艺术》(一)</title>
+        <link>https://Kirov7.github.io/p/%E7%B2%BE%E8%AF%BBjava%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF%E4%B8%80/</link>
+        <pubDate>Mon, 24 Jan 2022 00:00:00 +0000</pubDate>
+        
+        <guid>https://Kirov7.github.io/p/%E7%B2%BE%E8%AF%BBjava%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF%E4%B8%80/</guid>
+        <description>&lt;img src="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/Javaconcurrency.png" alt="Featured image of post 精读《Java并发编程的艺术》(一)" /&gt;&lt;h1 id=&#34;并发编程初探&#34;&gt;并发编程初探&lt;/h1&gt;
+&lt;h2 id=&#34;java天生的多线程&#34;&gt;Java天生的多线程&lt;/h2&gt;
+&lt;p&gt;当前的main函数就是一个JVM进程，在IDEA中可以看到共有6条线程&lt;/p&gt;
+&lt;p&gt;查看线程信息：jps（拿到线程的tid） + jstack（查看线程日志）&lt;/p&gt;
+&lt;p&gt;prio是进程中的优先级，os_prio是操作系统给线程定义的优先级，prio前加上deamo则为守护线程&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/6211ae1188865a265d98848f6bc2286d.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;截图&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;[6] Monitor Ctrl-Break&lt;/strong&gt; （跟JVM 关系不大，他是 IDEA 通过反射的方式，开启一个随着我们运行的jvm进程开启与关闭的一个监听线程。）&lt;/p&gt;
+&lt;p&gt;daemon prio=5  （可延迟开启）&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;**[5] Attach Listener **（附加监听器。 简单来说，他是jdk里边一个工具类提供的jvm 进程之间通信的工具。 cmd &amp;ndash; java -version; jvm &amp;ndash; jstack、jmap、dump） 进程间的通信。&lt;/p&gt;
+&lt;p&gt;daemon prio=5 	（可延迟开启）&lt;/p&gt;
+&lt;p&gt;开启我们这个线程的两个方式： 1. 通过jvm参数开启。-XX: StartAttachListener延迟开启： cmd &amp;ndash; java -version &amp;ndash;&amp;gt;  JVM 适时开启A L 线程&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;[4] Signal Dispatcher&lt;/strong&gt; （信号分发器。 我们通过cmd 发送jstack，传到了jvm进程，这时候信号分发器就要发挥作用了。）&lt;/p&gt;
+&lt;p&gt;daemon prio=9&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;[3] Finalizer&lt;/strong&gt; JVM 垃圾回收相关的内容。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;daemon prio=10 高优先级的守护线程。&lt;/li&gt;
+&lt;li&gt;只有当开始一轮垃圾收集的时候，才会开始调用finalize方法。&lt;/li&gt;
+&lt;li&gt;jvm在垃圾收集的时候，会将失去引用的对象封装到我们的 Fianlizer 对象（Reference）， 放入我们的 F-queue 队列中。由 Finalizer 线程执行inalize方法&lt;/li&gt;
+&lt;li&gt;Finalizer 专注垃圾收集，垃圾收集 &amp;ndash; 并行收集，不阻碍用户线程，低优先级线程。 prio=8 他是一个守护线程啊。而且这个线程目前并没有真正的开启，不足以发生minorgc或者是 full gc&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;[2] Reference Handler&lt;/strong&gt; （引用处理的线程。强，软，弱，虚。 -GC 有不同表现 - JVM深入分析）&lt;/p&gt;
+&lt;p&gt;引用处理线程-GC相关线程&lt;/p&gt;
+&lt;p&gt;daemon prio=10（GC很重要，优先级较高）&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;[1] main&lt;/strong&gt; 主线程&lt;/p&gt;
+&lt;p&gt;prio=5&lt;/p&gt;
+&lt;p&gt;操作系统面向的是JVM 进程，JVM 进程里面向的是 我们的main函数，。所以对于我们的操作系统如何看待我们的main函数优先级，无所谓。 只要os 给我们jvm进程足够公平的优先级就行。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;线程的状态&#34;&gt;线程的状态&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/a9af99ee75a683abaefcfa37ac82d984.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;截图&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;注：上图的 &lt;code&gt;Obejct.join()&lt;/code&gt; 应为 &lt;code&gt;Thread.join()&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;threadsleep-和-objectwait&#34;&gt;Thread.Sleep() 和 Object.Wait()&lt;/h2&gt;
+&lt;p&gt;Thread.Sleep()&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;不释放锁&lt;/li&gt;
+&lt;li&gt;响应中断（对中断敏感）&lt;/li&gt;
+&lt;li&gt;会释放CPU&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Obeject.wait()&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;会释放锁&lt;/li&gt;
+&lt;li&gt;响应中断（对中断敏感）&lt;/li&gt;
+&lt;li&gt;会释放CPU，让出时间片并进入等待队列&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;注：wait(0)表示永久等待&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;threadjoin&#34;&gt;Thread.join()&lt;/h2&gt;
+&lt;p&gt;底层调用Object.Wait()&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;会释放锁&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Thread的join方法，释放的是当前调用 join方法的那个对象的锁。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kd&#34;&gt;synchronized&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;obj&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;){&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;n&#34;&gt;thread&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;join&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//不释放锁
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kd&#34;&gt;synchronized&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Thread&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;currentThread&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;){&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;n&#34;&gt;thread&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;join&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;//释放锁
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;响应中断（对中断敏感）&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;线程间的通讯方式&#34;&gt;线程间的通讯方式&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;volitate 、synchronize、lock。（都保证可见性）&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;wait、notify、await() 、 signal&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;管道输入、输出流**（已过时）**&lt;/p&gt;
+&lt;p&gt;管道输入/输出流和普通的文件输入/输出流或者网络输入/输出流不同之处在于，它主要用于线程之间的数据传输，而传输的媒介为内存。管道输入/输出流主要包括了如下4种具体实现：PipedOutputStream、PipedInputStream、PipedReader和PipedWriter，前两种面向字节，而后两种面向字符。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Thread.join() ： 隐式唤醒。等待其他线程执行完成，其他线程会发送唤醒信号。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;ThradLocal()：支持子线程集成的一种形式。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;线程中断&lt;/p&gt;
+&lt;p&gt;线程中断时，sleep()会先清理中断标记，再抛出异常，导致thread.interupted = flase&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

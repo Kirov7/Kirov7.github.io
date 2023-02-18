@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='从零开始精读《Java并发编程的艺术》第二章,synchronized 全解读'>
+<title>精读《Java并发编程的艺术》(二)</title>
+
+<link rel='canonical' href='https://Kirov7.github.io/p/%E7%B2%BE%E8%AF%BBjava%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF%E4%BA%8C/'>
+
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='精读《Java并发编程的艺术》(二)'>
+<meta property='og:description' content='从零开始精读《Java并发编程的艺术》第二章,synchronized 全解读'>
+<meta property='og:url' content='https://Kirov7.github.io/p/%E7%B2%BE%E8%AF%BBjava%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF%E4%BA%8C/'>
+<meta property='og:site_name' content='枫阿雨&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Java并发' /><meta property='article:published_time' content='2022-02-08T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2022-02-08T00:00:00&#43;00:00'/><meta property='og:image' content='https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/Javaconcurrency.png' />
+<meta name="twitter:title" content="精读《Java并发编程的艺术》(二)">
+<meta name="twitter:description" content="从零开始精读《Java并发编程的艺术》第二章,synchronized 全解读"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/Javaconcurrency.png' />
+    <link rel="shortcut icon" href="https://img-1307890592.cos.ap-chengdu.myqcloud.com/common%2Ficon.png" />
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-232146632-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_huda4b8bed965e70c74cf5fa7e4b4f3c06_1003367_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🌏</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">枫阿雨&#39;s Blog</a></h1>
+            <h2 class="site-description">&lt;CrazyForCode&gt;</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Kirov7'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/links/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>Links</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://Kirov7.github.io/en/" >English</option>
+                        
+                            <option value="https://Kirov7.github.io/" selected>中文</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#synchronized的特性">Synchronized的特性</a></li>
+    <li><a href="#synchronized锁升级---mark-word32bit">Synchronized锁升级 - Mark Word（32bit）</a></li>
+    <li><a href="#synchronized锁升级---偏向锁">Synchronized锁升级 - 偏向锁</a></li>
+    <li><a href="#synchronized锁升级---偏向锁的撤销">Synchronized锁升级 - 偏向锁的撤销</a></li>
+    <li><a href="#synchronized锁升级---偏向锁的重偏向与批量撤销">Synchronized锁升级 - 偏向锁的重偏向与批量撤销</a></li>
+    <li><a href="#synchronized锁升级---轻量级锁加锁与解除">Synchronized锁升级 - 轻量级锁加锁与解除</a></li>
+    <li><a href="#synchronized锁升级---轻量级锁升级为重量级锁">Synchronized锁升级 - 轻量级锁升级为重量级锁</a></li>
+    <li><a href="#synchronized锁升级---markword转化过程重难点">Synchronized锁升级 - Markword转化过程（重难点）</a></li>
+    <li><a href="#死锁---产生条件与避免">死锁 - 产生条件与避免</a></li>
+    <li><a href="#objectmonitor的五个重要属性">ObjectMonitor的五个重要属性</a></li>
+    <li><a href="#cpu的用户态与内核态">CPU的用户态与内核态</a></li>
+    <li><a href="#用户态与内核态切换的触发条件">用户态与内核态切换的触发条件</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/%E7%B2%BE%E8%AF%BBjava%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF%E4%BA%8C/">
+                
+                    <img src="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/Javaconcurrency.png" loading="lazy" alt="Featured image of post 精读《Java并发编程的艺术》(二)" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/java/" >
+                Java
+            </a>
+        
+            <a href="/categories/%E7%B2%BE%E8%AF%BB%E7%AC%94%E8%AE%B0/" >
+                精读笔记
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E7%B2%BE%E8%AF%BBjava%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF%E4%BA%8C/">精读《Java并发编程的艺术》(二)</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            从零开始精读《Java并发编程的艺术》第二章,synchronized 全解读
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Feb 08, 2022</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 13 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="synchronized-全解读">synchronized 全解读</h1>
+<h2 id="synchronized的特性">Synchronized的特性</h2>
+<ol>
+<li>
+<p>有序性</p>
+<p>读读、写写、写读、读写 都是互斥的，只有一条线程拿到当前的锁，当前锁不释放，其他线程只能处于BLOCK状态，等待锁的释放，然后加入下一步的竞争</p>
+</li>
+<li>
+<p>可见性</p>
+<p>完全排他</p>
+</li>
+<li>
+<p>原子性</p>
+<p>本质上是线程互斥保证的原子性</p>
+</li>
+<li>
+<p>可重入性</p>
+</li>
+</ol>
+<br/>
+<h2 id="synchronized锁升级---mark-word32bit">Synchronized锁升级 - Mark Word（32bit）</h2>
+<p><img src="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/2654f92ba41f65199f03211c67f7397c.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="截图"
+	
+	
+></p>
+<h2 id="synchronized锁升级---偏向锁">Synchronized锁升级 - 偏向锁</h2>
+<ol>
+<li>
+<p>至少JDK1.6 版本且开启了偏向锁配置。
+偏向锁在Java 6和Java 7里是默认启用的，但是它在应用程序启动几秒钟之后才激活，如有必要可以使用JVM参数来关闭延迟：-XX:BiasedLockingStartupDelay=0。如果你确定应用程序里所有的锁通常情况下处于竞争状态，可以通过JVM参数关闭偏向锁：-XX:-UseBiasedLocking=false，那么程序默认会进入轻量级锁状态。</p>
+</li>
+<li>
+<p>被加锁的对象，没有真正、或者隐式的调用父类 Object 里边的hashcode方法。</p>
+<p>如果一旦调用了object的hashcode方法，那么我们的对象头里边就有真正的hashcode值了，如果偏向锁来进行markword的替换，至少要提供一个保存hashcode的地方吧？可惜的是，偏向锁并没有地方进行markword的保存，只有轻量级锁才会有“displace mark word”</p>
+</li>
+</ol>
+<p>为了让线程获得锁的代价更低而引入了偏向锁。当一个线程访问同步块并获取锁时，会在<strong>对象头</strong>（存储线程id）
+<strong>和栈帧中的锁记录里</strong>（线程有自己的栈帧，LOCK RECORD: 存储当前线程id）
+存储锁偏向的线程ID，以后该线程在进入和退出同步块时不需要进行CAS操作来加锁和解锁，只需简单地测试一下对象头的Mark Word里是否存储着指向
+<strong>当前线程的偏向锁。</strong>（id的匹配）
+如果测试成功，表示线程已经获得了锁。如果测试失败，则需要再测试一下Mark Word中偏向锁的标识是否设置成1（表示当前是偏向锁）：如果没有设置，则使用CAS竞争锁；如果设置了，则尝试使用CAS将对象头的
+<strong>偏向锁指向当前线程</strong>（ 其实是cas竞争替换 线程id）。</p>
+<blockquote>
+<p>注：相当于给每个每个对象固定“偏向”某个线程，没有竞争时只需要线程确认栈内记录的身份是否还偏向自己，如果身份还是匹配，则不需要真正的加锁。如果mark word中偏向的线程不是自己，则检测是否是偏向锁，如果不是则CAS锁升级争夺轻量级锁。如果目标是偏向锁，则用CAS更改mark word中偏向的线程</p>
+</blockquote>
+<h2 id="synchronized锁升级---偏向锁的撤销">Synchronized锁升级 - 偏向锁的撤销</h2>
+<p>偏向锁使用了一种等到竞争出现才释放锁的机制，一旦有竞争则升级到轻量级锁（简单且不严谨的说法）</p>
+<p><strong>偏向锁使用了一种等到竞争出现才释放锁的机制</strong>，所以当其他线程尝试竞争偏向锁时，持有偏向锁的线程才会释放锁。偏向锁的撤销，需要等待全局安全点（在这个时间点上没有正在执行的字节码）。它会首先暂停拥有偏向锁的线程，然后检查持有偏向锁的线程是否活着，如果线程不处于活动状态，则将对象头设置成无锁状态；如果线程仍然活着，拥有偏向锁的栈会被执行，遍历偏向对象的锁记录，栈中的锁记录和对象头的Mark Word要么重新偏向于其他线程，要么恢复到无锁或者标记对象不适合作为偏向锁，最后唤醒暂停的线程。 （包括锁不升级时的严谨说法）</p>
+<br/>
+<ol>
+<li>A线程获取偏向锁，并且A线程死亡退出。B线程争抢偏向锁，会直接升级当前对象的锁为轻量级锁。这只是针对我们争抢了一次。</li>
+<li>A线程获取偏向锁，并且A线程没有释放偏向锁（），还在syhnc的代码块里边。B线程此时过来争抢偏向锁，会直接升级为重量级锁。</li>
+<li>A线程获取偏向锁，并且A线程释放了锁，但是A线程并没有死亡还在活跃状态。B线程过来争抢，会直接升级为轻量级锁。
+综上所述，当我们尝试第一次竞争偏向锁时，如果A线程已经死亡，升级为轻量级锁；如果A线程未死亡，并且未释放锁，直接升级为重量级锁；如果A线程未死亡，并且已经释放了锁，直接升级为轻量级锁。</li>
+<li><strong>A线程获取偏向锁，并且A线程没有释放偏向锁（），还在syhnc的代码块里边。B线程多次争抢锁，会在加锁过程中采用重量级锁；但是，一旦锁被释放，当前对象还是会以轻量级锁的初始状态执行。</strong></li>
+<li><strong>A线程获取偏向锁，并且A线程释放了锁，但是A线程并没有死亡还在活跃状态。B线程过来争抢。部分争抢会升级为轻量级锁；部分争抢会依旧保持偏向锁。</strong></li>
+</ol>
+<br/>
+<h2 id="synchronized锁升级---偏向锁的重偏向与批量撤销">Synchronized锁升级 - 偏向锁的重偏向与批量撤销</h2>
+<p>偏向锁状态变化与最终升级为轻量级锁：</p>
+<ol>
+<li>A 线程获取偏向锁成功，已经退出执行不再是活跃线程； B线程过来获取偏向锁，默认前20次直接升级为轻量级锁 （触发批量重偏向阈值之前， 默认为 20次争抢，不同机器环境参数配置不一样）；</li>
+<li>A 线程获取偏向锁成功，已经退出执行不再是活跃线程； B线程过来获取偏向锁，默认20次以后，直接偏向线程 B。达到40次阈值后，若再有其他线程C过来争抢，则触发批量撤销。该对象不再有任何偏向锁的情况。</li>
+</ol>
+<p><strong>批量重偏向：</strong> 当我们的一个对象，Object 类，在经过<strong>默认 20次</strong>的争抢的情况下，会将后边的所有争抢从新偏向争抢的线程。当B线程争抢第 18 次的时候，触发了批量重偏向的阈值；在第20次以及以后的争抢里，jvm会将线程偏向线程b，因为jvm认为，这个对象更加适合线程B</p>
+<p><strong>批量撤销：</strong> 如果基于批量重偏向的基础上，还在继续进行争抢达到40次，并且有第三条线程C加入了，这个时候会触发批量撤销。JVM会标记该对象不能使用偏向锁，以后新创建的对象，直接以轻量级锁开始。 这个时候，才是真正的完成了锁升级。</p>
+<p><strong>真正的锁升级，是依赖于 class 的（加锁对象实例对应的类），而并不是依赖于 某一个 new出来的对象（偏向锁升级为轻量级锁）。</strong></p>
+<h2 id="synchronized锁升级---轻量级锁加锁与解除">Synchronized锁升级 - 轻量级锁加锁与解除</h2>
+<p>（1）轻量级锁加锁
+线程在执行同步块之前，JVM会先在当前线程的栈桢中创建用于存储锁记录的空间（Lock Record记录），并将对象头中的Mark Word（前30位 （25位的hashcode，4位的分代年龄，1位是否为偏向锁））复制到锁记录中，官方称为Displaced Mark Word。然后线程尝试使用CAS将对象头中的Mark Word替换为指向锁记录的指针（指向线程栈帧里边的Lock Record的指针）。如果成功，当前线程获得锁，如果失败，表示其他线程竞争锁，当前线程便尝试使用<font color=red><strong>自旋</strong></font>来获取锁。</p>
+<p>（2）轻量级锁解锁
+轻量级解锁时，会使用原子的CAS操作将Displaced Mark Word（Lock Record记录）替换回到对象头，如果成功，则表示没有竞争发生。如果失败，表示当前锁存在竞争，锁就会膨胀成重量级锁。</p>
+<p>轻量级锁升级为重量级锁：这个时候，只要我们的线程发生了竞争，并且CAS替换失败，就会发起锁膨胀，升级为重量级锁（针对的是一个对象实例）</p>
+<h2 id="synchronized锁升级---轻量级锁升级为重量级锁">Synchronized锁升级 - 轻量级锁升级为重量级锁</h2>
+<p><img src="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/e778fea7130be50e20d80f744622e3c6.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="截图"
+	
+	
+></p>
+<p>轻量级锁&mdash;重量级锁： 释放锁（前四步）并唤醒等待线程</p>
+<ol>
+<li>线程1 初始化monitor 对象；</li>
+<li>将状态设置为膨胀中（inflating）；</li>
+<li>将monitor里边的header属性，set称为对象的markword；（将自己lock record里边的存放的mark word的hashcode，分代年龄，是否为偏向锁 set 到 objectmonitor对象的header属性里）</li>
+<li>设置对象头为重量级锁状态（标记为改为00）；然后将前30位指向第1步初始化的monitor 对象；（真正的锁升级是由线程1操控的）</li>
+<li>唤醒线程2；</li>
+<li>线程2 开始争抢重量级锁。（线程2就干了一件事儿，就是弄了一个临时的重量级锁指针吧？还不是最后的重量级锁指针。因为最后的重量级锁指针是线程1初始化的并且是线程1修改的。 而且，线程2被唤醒之后，还不一定能够抢到这个重量级锁。Sync是非公平锁。 线程2费力不讨好，但是线程2做了一件伟大的事情：他是锁升级的奠基者。）</li>
+</ol>
+<h2 id="synchronized锁升级---markword转化过程重难点">Synchronized锁升级 - Markword转化过程（重难点）</h2>
+<p>创建一个对象，此时对象里边没有hashcode，所以该对象可以使用我们的偏向锁，偏向锁不会考虑hashcode，
+他会直接<strong>将自己的线程id放到我们的markword里边</strong>，不需要考虑后续的替换问题。 所以呢，一旦我们的对象主动调用了Object的hashcode方法，我们的偏向锁就自动不可用了。</p>
+<p>如果我们的对象有了hashcode和分代年龄和是否为偏向锁（30位）。在轻量级锁的状态下，<strong>这30位会被复制到我们的轻量级锁线程持有者的栈帧里的lock record里边记录</strong>。与此同时，我们的<strong>对象的markword里边存放的是我们的指向轻量级锁线程持有者的栈帧的lock recod里</strong>。如果一直存在轻量级锁竞争，在未发生锁膨胀的前提下，一直会保持轻量级锁，<strong>A线程释放的时候，会将markword替换回对象的markword里边</strong>，B线程下次再从新走一遍displace mark word；</p>
+<p>一旦发生了轻量级膨胀为重量级锁。前提，A线程持有锁；B线程争抢。
+B线程将marikword里边A线程的指针替换成一个临时的（过渡的）重量级锁指针，为了让A线程在cas往回替换markword的时候失败。
+A线程替换回markword失败后，会发起：1.初始化monitor对象；2. 将状态设置为膨胀中；3 <strong>将替换失败的 markword 放到 objectmonitr o的head属性里</strong>； 4。改变markword的锁标志为10；将markword里的 30 位设置为指向自己第一步初始化的那个monitor对象；5唤醒B线程； 6以后这个对象只能作为重量级锁；</p>
+<p>Markword从未丢失。</p>
+<h2 id="死锁---产生条件与避免">死锁 - 产生条件与避免</h2>
+<p>（学院派的严谨理论）</p>
+<p><strong>死锁产生的四个必要条件：</strong></p>
+<ul>
+<li>互斥：一个资源每次只能被一个进程使用 (资源独立)。</li>
+<li>请求与保持：一个进程因请求资源而阻塞时，对已获得的资源保持不放 (不释放锁)。</li>
+<li>不剥夺：进程已获得的资源，在未使用之前，不能强行剥夺 (抢夺资源)。</li>
+<li>循环等待：若干进程之间形成一种头尾相接的循环等待的资源关闭 (死循环)。</li>
+</ul>
+<p><strong>如何避免死锁：</strong></p>
+<ol>
+<li>破坏” 互斥” 条件：系统里取消互斥、若资源一般不被一个进程独占使用，那么死锁是肯定不会发生的，但一般 “互斥” 条件是无法破坏的，因此，在死锁预防里主要是破坏其他三个必要条件，而不去涉及破坏 “互斥” 条件。</li>
+<li>破坏 “请求和保持” 条件：
+方法 1：所有的进程在开始运行之前，必须一次性的申请其在整个运行过程各种所需要的全部资源。
+优点：简单易实施且安全。
+缺点：因为某项资源不满足，进程无法启动，而其他已经满足了的资源也不会得到利用，严重降低了资源的利用率，造成资源浪费。
+方法 2：该方法是对第一种方法的改进，允许进程只获得运行初期需要的资源，便开始运行，在运行过程中逐步释放掉分配到，已经使用完毕的资源，然后再去请求新的资源。这样的话资源的利用率会得到提高，也会减少进程的饥饿问题。</li>
+<li>破坏 “不剥夺” 条件：当一个已经持有了一些资源的进程在提出新的资源请求没有得到满足时，它必须释放已经保持的所有资源，待以后需要使用的时候再重新申请。这就意味着进程已占有的资源会被短暂的释放或者说被抢占了。</li>
+<li>破坏 “循环等待” 条件：可以通过定义资源类型的线性顺序来预防，可以将每个资源编号，当一个进程占有编号为 i 的资源时，那么它下一次申请资源只能申请编号大于 i 的资源。</li>
+</ol>
+<p>（简易说法）</p>
+<p><strong>避免死锁的几个常见方法：</strong></p>
+<ul>
+<li>避免一个线程同时获取多个锁。</li>
+<li>避免一个线程在锁内同时占用多个资源，尽量保证每个锁只占用一个资源。</li>
+<li>尝试使用定时锁，使用lock.tryLock（timeout）来替代使用内部锁机制。</li>
+<li>对于数据库锁，加锁和解锁必须在一个数据库连接里（分布式数据库），否则会出现解锁失败的情况。</li>
+</ul>
+<h2 id="objectmonitor的五个重要属性">ObjectMonitor的五个重要属性</h2>
+<ol>
+<li>header ： 重量级锁保存markword的地方</li>
+<li>own: 指向我们持有锁的线程；对象的markword里边也保存了指向monitor的指针；</li>
+<li>_cxq 队列： 竞争队列。 A线程持有锁没有释放； B和C线程同时过来争抢锁，都被block了，此时会将B和C线程加入到 该队列。</li>
+<li>EntryList队列：同步队列。A线程释放锁，B和C线程中会选定一个继承者（可以去争抢锁的这个线程），另外一个线程会被放入我们的EntryList队列里边。</li>
+<li>waitset：等待队列。Object wait的线程。</li>
+</ol>
+<p>A线程持有锁，BC线程过来竞争失败，进入cxq &ndash; 下轮竞争会把 cxq里的线程移动到EntrylIst中。假设B线程竞争到了锁，然后B线程调用了 Object.Wait方法，这时候B线程进入waitset，并释放锁。C线程拿到了锁，然后唤醒B线程。B线程会从waitset里边出来，直接竞争锁。如果竞争失败进入cxq，继续轮回，如果竞争成功，ok了。</p>
+<h2 id="cpu的用户态与内核态">CPU的用户态与内核态</h2>
+<p>CPU 的两种工作状态：内核态（管态）和用户态（目态）。</p>
+<p><strong>内核态：</strong></p>
+<ol>
+<li>系统中既有操作系统的程序，也有普通用户程序。为了安全性和稳定性，操作系统的程序不能随便访问，这就是内核态。即需要执行操作系统的程序就必须转换到内核态才能执行！</li>
+<li>内核态可以使用计算机所有的硬件资源！</li>
+</ol>
+<p><strong>用户态：</strong>
+不能直接使用系统资源，也不能改变 CPU 的工作状态，并且只能访问这个用户程序自己的存储空间！</p>
+<p>当一个进程在执行用户自己的代码时处于用户运行态（用户态），此时特权级最低，为 3 级，是普通的用户进程运行的特权级，大部分用户直接面对的程序都是运行在用户态。Ring3 状态不能访问 Ring0 的地址空间，包括代码和数据；当一个进程因为系统调用陷入内核代码中执行时处于内核运行态（内核态），此时特权级最高，为 0 级。执行的内核代码会使用当前进程的内核栈，每个进程都有自己的内核栈。</p>
+<p>用户运行一个程序，该程序创建的进程开始时运行自己的代码，处于用户态。如果要执行文件操作、网络数据发送等操作必须通过 write、send 等系统调用，这些系统调用会调用内核的代码。进程会切换到 Ring0，然后进入内核地址空间去执行内核代码来完成相应的操作。内核态的进程执行完后又会切换到 Ring3，回到用户态。这样，用户态的程序就不能随意操作内核地址空间，具有一定的安全保护作用。这说的保护模式是指通过内存页表操作等机制，保证进程间的地址空间不会互相冲突，一个进程的操作不会修改另一个进程地址空间中的数据。</p>
+<h2 id="用户态与内核态切换的触发条件">用户态与内核态切换的触发条件</h2>
+<p>当在系统中执行一个程序时，大部分时间是运行在用户态下的，在其需要操作系统帮助完成一些用户态自己没有特权和能力完成的操作时就会切换到内核态。
+用户态切换到内核态的 3 种方式
+（1）系统调用
+这是用户态进程主动要求切换到内核态的一种方式。用户态进程通过系统调用申请使用操作系统提供的服务程序完成工作。例如 fork（）就是执行了一个创建新进程的系统调用。系统调用的机制是使用了操作系统为用户特别开放的一个中断来实现，如 Linux 的 int 80h 中断。
+（2）异常
+当 cpu 在执行运行在用户态下的程序时，发生了一些没有预知的异常，这时会触发由当前运行进程切换到处理此异常的内核相关进程中，也就是切换到了内核态，如缺页异常。
+（3）外围设备的中断
+当外围设备完成用户请求的操作后，会向 CPU 发出相应的中断信号，这时 CPU 会暂停执行下一条即将要执行的指令而转到与中断信号对应的处理程序去执行，如果前面执行的指令时用户态下的程序，那么转换的过程自然就会是 由用户态到内核态的切换。如硬盘读写操作完成，系统会切换到硬盘读写的中断处理程序中执行后边的操作等。</p>
+<p>这三种方式是系统在运行时由用户态切换到内核态的最主要方式，其中系统调用可以认为是用户进程主动发起的，异常和外围设备中断则是被动的。从触发方式上看，切换方式都不一样，但从最终实际完成由用户态到内核态的切换操作来看，步骤有事一样的，都相当于执行了一个中断响应的过程。系统调用实际上最终是中断机制实现的，而异常和中断的处理机制基本一致。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/java%E5%B9%B6%E5%8F%91/">Java并发</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.css"integrity="sha256-J&#43;iAE0sgH8QSz9hpcDxXIftnj65JEZgNhGcgReTTK9s="crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.js"integrity="sha256-InsNdER1b2xUewP&#43;pKCUJpkhiqwHgqiPXDlIk7GzBu4="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/contrib/auto-render.min.js"integrity="sha256-y39Mpg7V3D4lhBX4x6O0bUqTV4pSrfgwEfGKfxkOdgI="crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/%E7%B2%BE%E8%AF%BBjava%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF%E5%9B%9B/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/Javaconcurrency.png" loading="lazy" data-key="" data-hash="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/Javaconcurrency.png"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">精读《Java并发编程的艺术》(四)</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E7%B2%BE%E8%AF%BBjava%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF%E4%B8%89/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/Javaconcurrency.png" loading="lazy" data-key="" data-hash="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/Javaconcurrency.png"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">精读《Java并发编程的艺术》(三)</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E7%B2%BE%E8%AF%BBjava%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF%E4%B8%80/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/Javaconcurrency.png" loading="lazy" data-key="" data-hash="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/Javaconcurrency.png"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">精读《Java并发编程的艺术》(一)</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Java并发编程学习笔记</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo="Kirov7/Blog-comment"
+        issue-term="pathname"
+        
+        label="none"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2022 - 
+        
+        2023 枫阿雨&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

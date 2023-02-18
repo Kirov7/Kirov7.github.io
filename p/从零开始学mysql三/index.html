@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='从零开始学MySQL,第三章 MySQL常用函数'>
+<title>从零开始学MySQL(三)</title>
+
+<link rel='canonical' href='https://Kirov7.github.io/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6mysql%E4%B8%89/'>
+
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='从零开始学MySQL(三)'>
+<meta property='og:description' content='从零开始学MySQL,第三章 MySQL常用函数'>
+<meta property='og:url' content='https://Kirov7.github.io/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6mysql%E4%B8%89/'>
+<meta property='og:site_name' content='枫阿雨&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='MySQL' /><meta property='article:published_time' content='2021-09-14T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2021-09-14T00:00:00&#43;00:00'/><meta property='og:image' content='https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/mysql.jpg' />
+<meta name="twitter:title" content="从零开始学MySQL(三)">
+<meta name="twitter:description" content="从零开始学MySQL,第三章 MySQL常用函数"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/mysql.jpg' />
+    <link rel="shortcut icon" href="https://img-1307890592.cos.ap-chengdu.myqcloud.com/common%2Ficon.png" />
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-232146632-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_huda4b8bed965e70c74cf5fa7e4b4f3c06_1003367_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🌏</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">枫阿雨&#39;s Blog</a></h1>
+            <h2 class="site-description">&lt;CrazyForCode&gt;</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Kirov7'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/links/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>Links</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://Kirov7.github.io/en/" >English</option>
+                        
+                            <option value="https://Kirov7.github.io/" selected>中文</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#第一节-常用数学函数">第一节 常用数学函数</a></li>
+    <li><a href="#第二节-常用字符串函数">第二节 常用字符串函数</a></li>
+    <li><a href="#第三节-日期和时间函数">第三节 日期和时间函数</a></li>
+    <li><a href="#第四节-条件判断函数">第四节 条件判断函数</a>
+      <ol>
+        <li><a href="#1-if-函数">1. IF 函数</a>
+          <ol>
+            <li><a href="#11-if">1.1 IF</a></li>
+            <li><a href="#12-ifnull">1.2 IFNULL</a></li>
+          </ol>
+        </li>
+        <li><a href="#2-case--when-语句">2. CASE &hellip; WHEN 语句</a>
+          <ol>
+            <li><a href="#21-case-wehn">2.1 CASE WEHN</a></li>
+            <li><a href="#22-case--when">2.2 CASE &hellip; WHEN</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#第五节-其他函数">第五节 其他函数</a>
+      <ol>
+        <li><a href="#1-数字格式化函数">1. 数字格式化函数</a></li>
+        <li><a href="#2-系统信息函数">2. 系统信息函数</a></li>
+      </ol>
+    </li>
+    <li><a href="#第六节-综合练习">第六节 综合练习</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6mysql%E4%B8%89/">
+                
+                    <img src="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/mysql.jpg" loading="lazy" alt="Featured image of post 从零开始学MySQL(三)" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" >
+                数据库
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6mysql%E4%B8%89/">从零开始学MySQL(三)</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            从零开始学MySQL,第三章 MySQL常用函数
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Sep 14, 2021</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 5 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="第三章-mysql常用函数">第三章 <code>MySQL</code>常用函数</h1>
+<h2 id="第一节-常用数学函数">第一节 常用数学函数</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th style="text-align:left">函数</th>
+<th style="text-align:left">说明</th>
+<th style="text-align:left">示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">ABS(X)</td>
+<td style="text-align:left">返回X的绝对值</td>
+<td style="text-align:left">SELECT ABS(-8);</td>
+</tr>
+<tr>
+<td style="text-align:left">FLOOR(X)</td>
+<td style="text-align:left">返回不大于X的最大整数</td>
+<td style="text-align:left">SELECT FLOOR(1.3);</td>
+</tr>
+<tr>
+<td style="text-align:left">CEIL(X)</td>
+<td style="text-align:left">返回不小于X的最小整数</td>
+<td style="text-align:left">SELECT CEIL(1.3);</td>
+</tr>
+<tr>
+<td style="text-align:left">TRUNCATE(X, D)</td>
+<td style="text-align:left">返回值X保留到小数点后D位的值，截断时不进行四舍五入</td>
+<td style="text-align:left">SELECT TRUNCATE(1.2328, 3);</td>
+</tr>
+<tr>
+<td style="text-align:left">ROUND(X)</td>
+<td style="text-align:left">返回离X最近的整数，截断时要进行四舍五入</td>
+<td style="text-align:left">SELECT ROUND(1.8);</td>
+</tr>
+<tr>
+<td style="text-align:left">ROUND(X, D)</td>
+<td style="text-align:left">返回X小数点后D位的值，截断时要进行四舍五入</td>
+<td style="text-align:left">SELECT ROUND(1.2323, 3);</td>
+</tr>
+<tr>
+<td style="text-align:left">RAND()</td>
+<td style="text-align:left">返回0-1的随机数</td>
+<td style="text-align:left">SELECT RAND();</td>
+</tr>
+<tr>
+<td style="text-align:left">MOD(N, M)</td>
+<td style="text-align:left">返回N除以M以后的余数</td>
+<td style="text-align:left">SELECT MOD(2, 9);</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="第二节-常用字符串函数">第二节 常用字符串函数</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th style="text-align:left">函数</th>
+<th style="text-align:left">说明</th>
+<th style="text-align:left">示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">CHAR_LENGTH(str)</td>
+<td style="text-align:left">计算字符串字符个数</td>
+<td style="text-align:left">SELECT CHAR_LENGTH(&lsquo;枫阿雨&rsquo;); &ndash;3</td>
+</tr>
+<tr>
+<td style="text-align:left">LENGTH(str)</td>
+<td style="text-align:left">返回值位字符串str的长度，单位为字节</td>
+<td style="text-align:left">SELECT LENGTH(&lsquo;枫阿雨&rsquo;); &ndash;9</td>
+</tr>
+<tr>
+<td style="text-align:left">CONCAT(s1, s2, &hellip;)</td>
+<td style="text-align:left">将多个字符串拼接在一起，其中任意一个为NULL则返回值为NULL</td>
+<td style="text-align:left">SELECT CONCAT(&lsquo;枫&rsquo;, &lsquo;阿&rsquo;, &lsquo;雨&rsquo;); &ndash;枫阿雨</td>
+</tr>
+<tr>
+<td style="text-align:left">LOWER(str)<br/>LCASE(str)</td>
+<td style="text-align:left">将字符串中的字母全部转换成小写</td>
+<td style="text-align:left">SELECT LOWER(&lsquo;JAVA&rsquo;);<br/>SELECT LCASE(&lsquo;JAVA&rsquo;); &ndash;java</td>
+</tr>
+<tr>
+<td style="text-align:left">UPPER(str)<br/>UCASE(str)</td>
+<td style="text-align:left">将字符串中的字母全部转换成大写</td>
+<td style="text-align:left">SELECT UPPER(&lsquo;java&rsquo;);<br/>SELECT LCASE(&lsquo;java&rsquo;); &ndash;JAVA</td>
+</tr>
+<tr>
+<td style="text-align:left">LEFT(s, n)</td>
+<td style="text-align:left">返回字符串s从最左边开始的n个字符</td>
+<td style="text-align:left">SELECT LEFT(&lsquo;枫阿雨带帅比&rsquo;, 3); &ndash;枫阿雨</td>
+</tr>
+<tr>
+<td style="text-align:left">RIGHT(s, N)</td>
+<td style="text-align:left">返回字符串s从最右边开始的n个字符</td>
+<td style="text-align:left">SELECT RIGHT(&lsquo;枫阿雨带帅比&rsquo;, 3); &ndash;带帅比</td>
+</tr>
+<tr>
+<td style="text-align:left">LTRIM(str)</td>
+<td style="text-align:left">返回字符串s，其左边的所有空格被删除</td>
+<td style="text-align:left">SELECT LTRIM(&lsquo;Java&rsquo;); &ndash;Java</td>
+</tr>
+<tr>
+<td style="text-align:left">RTRIM(str)</td>
+<td style="text-align:left">返回字符串s，其右边的所有空格被删除</td>
+<td style="text-align:left">SELECT RTRIM(&lsquo;Java &lsquo;); &ndash;Java</td>
+</tr>
+<tr>
+<td style="text-align:left">TRIM(str)</td>
+<td style="text-align:left">返回字符串str删除了两边空格之后的字符串</td>
+<td style="text-align:left">SELECT TRIM(&rsquo;  Java &lsquo;); &ndash;Java</td>
+</tr>
+<tr>
+<td style="text-align:left">REPLACE(s, s1, s2)</td>
+<td style="text-align:left">返回一个字符串，用字符串s2替代字符串s中的所有字符串s1</td>
+<td style="text-align:left">SELECT REPLACE(&lsquo;疯阿雨&rsquo;, &lsquo;疯&rsquo;, &lsquo;枫&rsquo;); &ndash;枫阿雨</td>
+</tr>
+<tr>
+<td style="text-align:left">SUBSTRING(s, n, len)</td>
+<td style="text-align:left">从字符串s中返回一个第n个字符开始 长度为len的字符串</td>
+<td style="text-align:left">SELECT SUBSTRING(&lsquo;枫阿雨带帅比&rsquo;, 2, 2); &ndash;阿雨</td>
+</tr>
+</tbody>
+</table></div>
+<p><font color=blue>示例</font>：假设表中有信管和大数据四个班(class)，查询信管和大数据各有多少人</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="k">LEFT</span><span class="p">(</span><span class="k">class</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">),</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">student</span><span class="w"> </span><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">LEFT</span><span class="p">(</span><span class="k">class</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><font color=blue>示例</font>：查询名字有4个字的学生信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">student</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="k">CHAR_LENGTH</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">=</span><span class="mi">4</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><font color=blue>示例</font>：查询成绩能够被10整除的考试信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">student</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="k">MOD</span><span class="p">(</span><span class="n">score</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">)</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="第三节-日期和时间函数">第三节 日期和时间函数</h2>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th style="text-align:left">函数</th>
+<th style="text-align:left">说明</th>
+<th style="text-align:left">示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">CURDATE()<br/>CURRENT_DATE()</td>
+<td style="text-align:left">返回当前日期：<code>YY-MM-dd </code></td>
+<td style="text-align:left">SELECT CURDATE();</td>
+</tr>
+<tr>
+<td style="text-align:left">CURTIME()<br/>CURRENT_TIME()</td>
+<td style="text-align:left">返回当前时间：<code>HH:mm:ss</code></td>
+<td style="text-align:left">SELECT CURTIME;</td>
+</tr>
+<tr>
+<td style="text-align:left">NOW()<br/>CURRENT_TIMESTAMP()<br/>SYSDATE();</td>
+<td style="text-align:left">返回当前日期和时间：<code>YY-MM-dd HH:mm:ss</code></td>
+<td style="text-align:left">SELECT NOW();</td>
+</tr>
+<tr>
+<td style="text-align:left">YEAR(d)</td>
+<td style="text-align:left">返回日期 d 中的年份值</td>
+<td style="text-align:left">SELECT YEAR(NOW());</td>
+</tr>
+<tr>
+<td style="text-align:left">MONTH(d)</td>
+<td style="text-align:left">返回日期 d 中的月份值，范围是1~12</td>
+<td style="text-align:left">SELECT MONTH(NOW());</td>
+</tr>
+<tr>
+<td style="text-align:left">WEEKDAY(d)</td>
+<td style="text-align:left">返回日期 d 是星期几</td>
+<td style="text-align:left">SELECT WEEKDAY(NOW());</td>
+</tr>
+<tr>
+<td style="text-align:left">DAYOFMONTH(d)</td>
+<td style="text-align:left">返回给定日期 d 是当月的第几天</td>
+<td style="text-align:left">SELECT DAYOFMONTH(NOW());</td>
+</tr>
+<tr>
+<td style="text-align:left">HOUR(d)</td>
+<td style="text-align:left">返回日期 d 的小时数</td>
+<td style="text-align:left">SELECT HOUR(NOW());</td>
+</tr>
+<tr>
+<td style="text-align:left">MINUTE(d)</td>
+<td style="text-align:left">返回日期 d 的分钟数</td>
+<td style="text-align:left">SELECT MINUTE(NOW());</td>
+</tr>
+<tr>
+<td style="text-align:left">SECOND(d)</td>
+<td style="text-align:left">返回日期 d 的秒数</td>
+<td style="text-align:left">SELECT SECOND(NOW());</td>
+</tr>
+<tr>
+<td style="text-align:left">ADDDATE(d, n)</td>
+<td style="text-align:left">返回起始日期 d 加上 n 天的日期</td>
+<td style="text-align:left">SELECT ADDDATE(NOW(), 3);</td>
+</tr>
+<tr>
+<td style="text-align:left">TIMESTAMPDIFF(INTERVAL expr type, d1, d2)</td>
+<td style="text-align:left">返回给定日期 d1 和 d2 的时间差</td>
+<td style="text-align:left">SELECT TIMESTAMPDIFF(YEAR, &lsquo;2003-1-4&rsquo;, &lsquo;2022-1-22&rsquo;);</td>
+</tr>
+<tr>
+<td style="text-align:left">DATE_FORMAT(d, f)</td>
+<td style="text-align:left">返回给定日期格式的字符串</td>
+<td style="text-align:left">SELECT DATE_FORMAT(NOW(), &lsquo;%Y-%m-%d %H:%i:%s&rsquo;);</td>
+</tr>
+</tbody>
+</table></div>
+<p><font color=blue>示例</font>：查询年龄在20岁以上的学生信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">student</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">TIMESTAMPDIFF</span><span class="p">(</span><span class="k">YEAR</span><span class="p">,</span><span class="w"> </span><span class="n">birthday</span><span class="p">,</span><span class="w"> </span><span class="n">NOW</span><span class="p">())</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">20</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><font color=blue>示例</font>：查询今天过生日的学生信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">student</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="k">MONTH</span><span class="p">(</span><span class="n">birthday</span><span class="p">)</span><span class="o">=</span><span class="k">MONTH</span><span class="p">(</span><span class="n">NOW</span><span class="p">())</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">DATEOFMONTH</span><span class="p">(</span><span class="n">birthday</span><span class="p">)</span><span class="o">=</span><span class="n">DATEOFMONTH</span><span class="p">(</span><span class="n">NOW</span><span class="p">());</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><font color=blue>示例</font>：查询本周过生日的学生信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">student</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="k">RIGHT</span><span class="p">(</span><span class="n">birthday</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="k">RIGHT</span><span class="p">(</span><span class="n">DATE_FORMAT</span><span class="p">(</span><span class="n">ADDDATE</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="o">-</span><span class="n">DAYOFWEEK</span><span class="p">(</span><span class="n">NOW</span><span class="p">())),</span><span class="w"> </span><span class="s1">&#39;%Y-%m-%d&#39;</span><span class="p">),</span><span class="w"> </span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="k">RIGHT</span><span class="p">(</span><span class="n">birthday</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">RIGHT</span><span class="p">(</span><span class="n">DATE_FORMAT</span><span class="p">(</span><span class="n">ADDDATE</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="mi">7</span><span class="o">-</span><span class="n">DAYOFMONTH</span><span class="p">(</span><span class="n">NOW</span><span class="p">())),</span><span class="w"> </span><span class="s1">&#39;%Y-%m-%d&#39;</span><span class="p">),</span><span class="w"> </span><span class="mi">5</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="第四节-条件判断函数">第四节 条件判断函数</h2>
+<h3 id="1-if-函数">1. IF 函数</h3>
+<h4 id="11-if">1.1 IF</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">IF</span><span class="p">(</span><span class="err">条件</span><span class="p">,</span><span class="w"> </span><span class="err">表达式</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="err">表达式</span><span class="mi">2</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果条件满足，则使用表达式1，否则使用表达式2</p>
+<p><font color=blue>示例</font>：将学生成绩展示为及格和不及格</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="k">IF</span><span class="p">(</span><span class="n">score</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;及格&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;不及格&#39;</span><span class="p">)</span><span class="w"> </span><span class="n">finalScore</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">scoreTable</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="12-ifnull">1.2 IFNULL</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="n">IFNULL</span><span class="p">(</span><span class="err">字段</span><span class="p">,</span><span class="w"> </span><span class="err">表达式</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果字段值为空，则使用表达式，否则，使用字段值</p>
+<p><font color=blue>示例</font>：将未参加考试的学生成绩展示为缺考</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">IFNULL</span><span class="p">(</span><span class="n">score</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;缺考&#39;</span><span class="p">)</span><span class="w"> </span><span class="n">finalScore</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">scoreTable</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="2-case--when-语句">2. CASE &hellip; WHEN 语句</h3>
+<h4 id="21-case-wehn">2.1 CASE WEHN</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="err">条件</span><span class="mi">1</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="err">表达式</span><span class="mi">1</span><span class="w"> </span><span class="p">[</span><span class="k">WHEN</span><span class="w"> </span><span class="err">条件</span><span class="mi">2</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="err">表达式</span><span class="mi">2</span><span class="w"> </span><span class="p">...]</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="err">表达式</span><span class="n">n</span><span class="w"> </span><span class="k">END</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果条件1满足，则使用表达式1；【如果条件2满足，则使用表达式2， &hellip; 】否则，使用表达式n。相当于Java中的多重if..else语句</p>
+<p><font color=blue>示例</font>：行转列，查看每人每科的分数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">name</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">course</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">MAX</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="p">(</span><span class="n">course</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Java&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="n">score</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="n">JavaScore</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">MAX</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="p">(</span><span class="n">course</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Python&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="n">score</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="n">PythonScore</span><span class="p">,</span><span class="w">  
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">MAX</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="p">(</span><span class="n">course</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;C/Cpp&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="n">score</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">C</span><span class="o">/</span><span class="n">CppScore</span><span class="p">,</span><span class="w">  
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">MAX</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="p">(</span><span class="n">course</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Golang&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="n">score</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="n">GolangScore</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">FROM</span><span class="w"> </span><span class="n">scoreTable</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">name</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="22-case--when">2.2 CASE &hellip; WHEN</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CASE</span><span class="w"> </span><span class="err">表达式</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="err">值</span><span class="mi">1</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="err">表达式</span><span class="mi">1</span><span class="w"> </span><span class="p">[</span><span class="k">WHEN</span><span class="w"> </span><span class="err">值</span><span class="mi">2</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="err">表达式</span><span class="mi">2</span><span class="w"> </span><span class="p">...]</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="err">表达式</span><span class="n">n</span><span class="w"> </span><span class="k">END</span><span class="w"> 
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果表达式的执行结果为值1，则使用表达式1；【执行结果为值2，则使用表达式2， &hellip; 】否则，使用表达式n。相当于Java中的switch语句</p>
+<p><font color=blue>示例</font>：行转列，查看每人每科的分数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">name</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="n">course</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">MAX</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="n">course</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="s1">&#39;Java&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="n">score</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="n">JavaScore</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">MAX</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="n">course</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="s1">&#39;Python&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="n">score</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="n">PythonScore</span><span class="p">,</span><span class="w">  
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">MAX</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="n">course</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="s1">&#39;C/Cpp&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="n">score</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="k">C</span><span class="o">/</span><span class="n">CppScore</span><span class="p">,</span><span class="w">  
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">MAX</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="n">course</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="s1">&#39;Golang&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="n">score</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="n">GolangScore</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">FROM</span><span class="w"> </span><span class="n">scoreTable</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">name</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><font color=blue>练习</font>：查询各班级人数，查询结果格式为 班级 男 女 其他</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">class</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="n">sex</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="s1">&#39;男&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="n">sex</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;男&#39;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="n">sex</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="s1">&#39;女&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="n">sex</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;女&#39;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="k">SUM</span><span class="p">(</span><span class="k">CASE</span><span class="w"> </span><span class="n">sex</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="s1">&#39;其他&#39;</span><span class="w"> </span><span class="k">THEN</span><span class="w"> </span><span class="n">sex</span><span class="w"> </span><span class="k">ELSE</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">END</span><span class="p">)</span><span class="w"> </span><span class="s1">&#39;其他&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">FROM</span><span class="w"> </span><span class="n">scoreTable</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">class</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="第五节-其他函数">第五节 其他函数</h2>
+<h3 id="1-数字格式化函数">1. 数字格式化函数</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="n">FORMAT</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="w"> </span><span class="n">D</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>将数字X格式化，将X保留到小数点后D位，截断时要进行四舍五入</p>
+<p><font color=blue>示例</font>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="n">FORMAT</span><span class="p">(</span><span class="mi">1</span><span class="p">.</span><span class="mi">2353</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="2-系统信息函数">2. 系统信息函数</h3>
+<div class="table-wrapper"><table>
+<thead>
+<tr>
+<th style="text-align:left">函数</th>
+<th style="text-align:left">说明</th>
+<th style="text-align:left">示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">VERSION()</td>
+<td style="text-align:left">获取服务器的版本号</td>
+<td style="text-align:left">SELECT VERSION();</td>
+</tr>
+<tr>
+<td style="text-align:left">CONNECTION_ID()</td>
+<td style="text-align:left">获取服务器的连接数</td>
+<td style="text-align:left">SELECT CONNECTION_ID();</td>
+</tr>
+<tr>
+<td style="text-align:left">DATEBASE()<br/>SCHEMA()</td>
+<td style="text-align:left">获取当前数据库名</td>
+<td style="text-align:left">SELECT DATEBASE();<br/>SELECT SCHEMA();</td>
+</tr>
+<tr>
+<td style="text-align:left">USER()<br/>SYSTEM_USER()<br/>SESSION_USER()</td>
+<td style="text-align:left">获取当前用户名</td>
+<td style="text-align:left">SELECT USER();<br/>SELECT SYSTEM_USER();<br/>SELECT SESSION_USER();</td>
+</tr>
+<tr>
+<td style="text-align:left">CURRENT_USER()<br/>CURRENT_USER</td>
+<td style="text-align:left">获取当前用户名</td>
+<td style="text-align:left">SELECT CURRENT_USER;</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="第六节-综合练习">第六节 综合练习</h2>
+<p><strong>1. 求字符串<code>'ABCdEfGHIJkLMn'</code>的字符数</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="k">CHAR_LENGTH</span><span class="p">(</span><span class="s1">&#39;ABCdEfGHIJkLMn&#39;</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>2. 将<code>'枫阿雨'</code>和<code>'带帅比'</code>拼接成新的字符串</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">SELECT CONCAT(&#39;枫阿雨&#39;, &#39;带帅比&#39;);
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>3. 求<code>'2003-01-04'</code>到现在总过有多少天</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="n">TIMESTAMPDIFF</span><span class="p">(</span><span class="k">DAY</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;2003-01-04&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">NOW</span><span class="p">());</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>4. 如果字段score的值大于90，则展示为优秀，否则展示为良好</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="k">IF</span><span class="p">(</span><span class="n">score</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">90</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;优秀&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;良好&#39;</span><span class="p">)</span><span class="w"> </span><span class="n">score</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><hr>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/mysql/">MySQL</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.css"integrity="sha256-J&#43;iAE0sgH8QSz9hpcDxXIftnj65JEZgNhGcgReTTK9s="crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.js"integrity="sha256-InsNdER1b2xUewP&#43;pKCUJpkhiqwHgqiPXDlIk7GzBu4="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/contrib/auto-render.min.js"integrity="sha256-y39Mpg7V3D4lhBX4x6O0bUqTV4pSrfgwEfGKfxkOdgI="crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/mysql%E7%B4%A2%E5%BC%95%E5%8F%8A%E5%85%B6%E4%BC%98%E5%8C%96%E6%80%BB%E7%BB%93/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/cfclogo03.png" loading="lazy" data-key="" data-hash="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/cfclogo03.png"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">MySQL索引及其优化总结</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6mysql%E4%B8%83/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/mysql.jpg" loading="lazy" data-key="" data-hash="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/mysql.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">从零开始学MySQL(七)</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6mysql%E5%85%AD/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/mysql.jpg" loading="lazy" data-key="" data-hash="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/mysql.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">从零开始学MySQL(六)</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6mysql%E4%BA%94/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/mysql.jpg" loading="lazy" data-key="" data-hash="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/mysql.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">从零开始学MySQL(五)</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="has-image">
+    <a href="/p/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E5%AD%A6mysql%E5%9B%9B/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/mysql.jpg" loading="lazy" data-key="" data-hash="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/mysql.jpg"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">从零开始学MySQL(四)</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo="Kirov7/Blog-comment"
+        issue-term="pathname"
+        
+        label="none"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2022 - 
+        
+        2023 枫阿雨&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

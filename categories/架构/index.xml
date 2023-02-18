@@ -1,0 +1,636 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>架构 on 枫阿雨&#39;s Blog</title>
+        <link>https://Kirov7.github.io/categories/%E6%9E%B6%E6%9E%84/</link>
+        <description>Recent content in 架构 on 枫阿雨&#39;s Blog</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>zh-cn</language>
+        <lastBuildDate>Sun, 18 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://Kirov7.github.io/categories/%E6%9E%B6%E6%9E%84/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>WEB服务端系统架构演进概述</title>
+        <link>https://Kirov7.github.io/p/web%E6%9C%8D%E5%8A%A1%E7%AB%AF%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84%E6%BC%94%E8%BF%9B%E6%A6%82%E8%BF%B0/</link>
+        <pubDate>Sun, 18 Sep 2022 00:00:00 +0000</pubDate>
+        
+        <guid>https://Kirov7.github.io/p/web%E6%9C%8D%E5%8A%A1%E7%AB%AF%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84%E6%BC%94%E8%BF%9B%E6%A6%82%E8%BF%B0/</guid>
+        <description>&lt;img src="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/cfclogo03.png" alt="Featured image of post WEB服务端系统架构演进概述" /&gt;&lt;h1 id=&#34;web服务端系统架构演进概述&#34;&gt;WEB服务端系统架构演进概述&lt;/h1&gt;
+&lt;blockquote&gt;
+&lt;p&gt;注：本系列内容为个人整理与总结的架构演进的鸟瞰图，其中部分概念的解释由我个人总结得出，仅代表我个人的理解，难免存在纰漏，如有任何问题均可随时提出并指正&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;服务端-or-客户端&#34;&gt;服务端 or 客户端&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;什么是服务端和客户端，它和前端后端有什么关联和区别&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;认识-服务&#34;&gt;认识 “服务”&lt;/h3&gt;
+&lt;p&gt;服务，是根据功能抽象出的概念。比如说，处理用户登录信息的认证服务,负责持久化存储数据的数据库服务，以及为了加快查询速度的缓存服务等&lt;/p&gt;
+&lt;h3 id=&#34;服务进程端口&#34;&gt;服务、进程、端口？&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;端口&lt;/strong&gt;的主要作用是表示一台计算机中的特定&lt;strong&gt;进程&lt;/strong&gt;所提供的&lt;strong&gt;服务&lt;/strong&gt;。网络中的计算机是通过 &lt;code&gt;IP地址&lt;/code&gt; 来代表其身份的，它只能表示某台特定的计算机，但是一台计算机上可以同时提供很多个服务，如数据库服务、FTP服务(文件传输)、Web服务等，我们就通过端口号来区别相同计算机所提供的这些不同的服务，如常见的端口号80表示的是HTTP服务端口，端口号3306是MySQL的默认端口号，端口号8080是Java的开源的流行Web应用服务器Tomcat的默认端口号等。一个IP地址的端口通过16bit进行编号，最多可以有65536个端口，即端口号的取值范围是&lt;code&gt;0 ~ 65535&lt;/code&gt;，其中0～1023是被规定好了的，被称作“众所周知的端口”(Well Known Ports)，且在同一台计算机上端口号不能重复，否则，就会产生端口号冲突这样的例外&lt;/p&gt;
+&lt;h4 id=&#34;go语言搭建一个最简单的web服务器&#34;&gt;Go语言搭建一个最简单的Web服务器&lt;/h4&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;http://120.48.87.191:9999/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;http://120.48.87.191:9999&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kn&#34;&gt;package&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;main&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;s&#34;&gt;&amp;#34;fmt&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;s&#34;&gt;&amp;#34;net/http&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kd&#34;&gt;func&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;IndexHandler&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;w&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;http&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;ResponseWriter&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;r&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;*&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;http&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;Request&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nx&#34;&gt;fmt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;Fprintln&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;w&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;hello world&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kd&#34;&gt;func&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;main&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nx&#34;&gt;http&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;HandleFunc&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;/&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;IndexHandler&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nx&#34;&gt;http&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;ListenAndServe&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;:9999&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;nil&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;前端后端分还是不分&#34;&gt;前端后端，分？还是不分？&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;我们所说的前后端分离到底是什么样的&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;前后端一体模板引擎渲染方式的架构示例：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/image-20220916110523047.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20220916110523047&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;现流行的前后端分离式架构示例：CSR&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/image-20220916163603087.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20220916163603087&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;前后端分离的优势与劣势&#34;&gt;前后端分离的优势与劣势&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;优势：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;以实现真正的前后端解耦，优化开发流程，划分职责界限&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;减少后端服务器的并发负载压力&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;更友好的错误提示&lt;/p&gt;
+&lt;p&gt;&amp;hellip;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;劣势：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;前端响应较慢，资源消耗严重，在业务复杂的情况下，一个页面可能要发起多次HTTP请求才能将页面渲染完毕，且在Json返回的数据量比较大的情况下，渲染的十分缓慢，会出现页面卡顿的情况&lt;/li&gt;
+&lt;li&gt;不利于SEO，搜索引擎的爬虫无法爬下JS异步渲染的数据&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;为了解决不足，后续在前后端分离的基础上衍生出了引入NodeJS作为中间层的进行服务端渲染的架构方案&amp;hellip;&amp;hellip;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/image-20220918133719987.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20220918133719987&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/image-20220916220734923.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20220916220734923&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;服务端与客户端的交互&#34;&gt;服务端与客户端的交互&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;数据传递主要方式：&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;form表单&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ajax&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;Ajax(Asynchronous JavaScript and XML) 异步JavaScript和XML，一种用于创建快速动态网页的异步刷新技术。通过在后台与服务器进行少量数据交换，AJAX 可以使网页实现异步更新。即可以在不重新加载整个网页的情况下，对网页的某部分进行更新。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;数据传递主要格式：&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;XML&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;JSON&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;JSON(JavaScript Object Notation,) 是一种轻量级的数据交换格式，采用完全独立于编程语言的文本格式来存储和表示数据。简洁和清晰的层次结构使得 JSON 成为理想的数据交换语言。 易于阅读和编写，同时也易于机器解析和生成，并有效地提升网络传输效率。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;前后端-json通信api示例&#34;&gt;前后端 JSON通信API示例&lt;/h4&gt;
+&lt;p&gt;&lt;code&gt;评论列表功能&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;接口url：/comments/article/{id}&lt;/p&gt;
+&lt;p&gt;请求方式：GET&lt;/p&gt;
+&lt;p&gt;请求参数：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;参数名称&lt;/th&gt;
+&lt;th&gt;参数类型&lt;/th&gt;
+&lt;th&gt;说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;id&lt;/td&gt;
+&lt;td&gt;long&lt;/td&gt;
+&lt;td&gt;文章id（路径参数）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;返回数据：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;34
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;35
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;36
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;37
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;38
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;#34;success&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;true&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;#34;code&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;200&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;#34;msg&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;success&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;#34;data&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            &lt;span class=&#34;nt&#34;&gt;&amp;#34;id&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            &lt;span class=&#34;nt&#34;&gt;&amp;#34;author&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                &lt;span class=&#34;nt&#34;&gt;&amp;#34;nickname&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;GodLanBo&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                &lt;span class=&#34;nt&#34;&gt;&amp;#34;avatar&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;http://tva1.sinaimg.cn/large/005Uj3w8ly1h68mgfr3bcj31hc0u0mz9.jpg&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                &lt;span class=&#34;nt&#34;&gt;&amp;#34;id&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;202&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            &lt;span class=&#34;p&#34;&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            &lt;span class=&#34;nt&#34;&gt;&amp;#34;content&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;很久没和朋友去唱歌了🎤，一下午嗓子都莫得了「=。=」&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            &lt;span class=&#34;nt&#34;&gt;&amp;#34;childrens&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                    &lt;span class=&#34;nt&#34;&gt;&amp;#34;id&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                    &lt;span class=&#34;nt&#34;&gt;&amp;#34;author&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                        &lt;span class=&#34;nt&#34;&gt;&amp;#34;nickname&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;群垫底&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                        &lt;span class=&#34;nt&#34;&gt;&amp;#34;avatar&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;http://tva1.sinaimg.cn/large/005Uj3w8ly1h68mgfr3bcj31hc0u0mz9.jpg&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                        &lt;span class=&#34;nt&#34;&gt;&amp;#34;id&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;203&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                    &lt;span class=&#34;p&#34;&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                    &lt;span class=&#34;nt&#34;&gt;&amp;#34;content&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;和朋友一起玩桌游，简简单单四个角色，玩不腻=。=&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                    &lt;span class=&#34;nt&#34;&gt;&amp;#34;childrens&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[],&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                    &lt;span class=&#34;nt&#34;&gt;&amp;#34;createDate&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;2013-01-14 20:30&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                    &lt;span class=&#34;nt&#34;&gt;&amp;#34;level&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                    &lt;span class=&#34;nt&#34;&gt;&amp;#34;toUser&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                        &lt;span class=&#34;nt&#34;&gt;&amp;#34;nickname&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;GodLanBo&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                        &lt;span class=&#34;nt&#34;&gt;&amp;#34;avatar&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;http://tva1.sinaimg.cn/large/005Uj3w8ly1h68mgfr3bcj31hc0u0mz9.jpg&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                        &lt;span class=&#34;nt&#34;&gt;&amp;#34;id&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                    &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            &lt;span class=&#34;p&#34;&gt;],&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            &lt;span class=&#34;nt&#34;&gt;&amp;#34;createDate&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;2013-01-14 02:03&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            &lt;span class=&#34;nt&#34;&gt;&amp;#34;level&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            &lt;span class=&#34;nt&#34;&gt;&amp;#34;toUser&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;null&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h4 id=&#34;json应用示例&#34;&gt;JSON应用示例&lt;/h4&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;http://120.48.87.191:9998/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;http://120.48.87.191:9998&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;代码实例通过共享屏幕展示&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;被追认的名号---单体架构&#34;&gt;被追认的名号 - 单体架构&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;“单体”只是表明系统中主要的过程调用都是进程内调用，不会发生进程间通信，仅此而已。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;什么是单体架构&#34;&gt;什么是单体架构&lt;/h3&gt;
+&lt;p&gt;“单体架构”在整个软件架构演进的历史进程里，是出现时间最早、应用范围最广、使用人数最多、统治历史最长的一种架构风格，但“单体”这个名称，却是在微服务开始流行之后才“事后追认”所形成的概念。&lt;/p&gt;
+&lt;h3 id=&#34;单体架构不可拆分&#34;&gt;单体架构不可拆分？&lt;/h3&gt;
+&lt;p&gt;说起单体架构、巨石系统的缺点时，在脑海中闪过的第一个特点就是它的“不可拆分”，难以扩展，因此才不能支撑越来越大的软件规模。这种想法看似合理，其实是有失偏颇的，至少不完整。&lt;/p&gt;
+&lt;p&gt;从&lt;strong&gt;纵向角度&lt;/strong&gt;看，没有哪个系统是不分层的，分层架构（Layered Architecture）已是现在几乎所有信息系统建设中都普遍认可、采用的软件设计方法，无论是单体还是微服务，抑或是其他架构风格，都会对代码进行纵向层次划分，收到的外部请求在各层之间以不同形式的数据结构进行流转传递，触及最末端的数据库后按相反的顺序回馈响应，如图所示。对于这个意义上的“可拆分”，单体架构完全不会展露出丝毫的弱势，反而可能会因更容易开发、部署、测试而获得一些便捷性上的好处。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/image-20220907153415823.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20220907153415823&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;从&lt;strong&gt;横向角度&lt;/strong&gt;来看，单体架构也可以支持按照技术、功能、职责等维度，将软件拆分为各种模块，以便重用和管理代码。横向扩展（Scale Horizontally）的角度来衡量，在负载均衡器之后同时部署若干个相同的单体系统副本，以达到分摊流量压力的效果。&lt;/p&gt;
+&lt;h4 id=&#34;拓展三层架构与mvc架构&#34;&gt;拓展：三层架构与MVC架构&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;三层架构&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;对应上图的Presentation Layer、Business Layer、Persistence Layer&lt;/p&gt;
+&lt;p&gt;三层架构有时也被称作：&lt;strong&gt;表示层(web层)、业务逻辑层(service层)、数据访问层(dao层)&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;三层架构是从整个业务应用角度对程序的划分，其分层逻辑来源于“&lt;strong&gt;高内聚，低耦合&lt;/strong&gt;”的思想。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;1、表现层（UI）：通俗讲就是展现给用户的界面，即用户在使用一个系统的时候他的所见所得。
+2、业务逻辑层（BLL）：针对具体问题的操作，也可以说是对数据层的操作，对数据业务逻辑处理。
+3、数据访问层（DAL）：该层所做事务直接操作数据库，针对数据的增添、删除、修改、更新、查找等。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;MVC架构&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;MVC模式实现了数据和视图的分离&lt;/p&gt;
+&lt;p&gt;属于组合设计模式的范畴，就如同其他设计模式一样，模式的出现就是为了对某种功能的优化，而MVC模式可以看做是对三层架构中表现层的一种细分优化。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;1、模型（Model）：模型持有所有的数据、状态和程序逻辑。模型独立于视图和控制器。
+2、视图（View）：用来呈现模型。视图通常直接从模型中取得它需要显示的状态与数据。对于相同的信息可以有多个不同的显示形式或视图。
+3、控制器（Controller）：位于视图和模型中间，负责接受用户的输入，将输入进行解析并反馈给模型。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/image-20220916224115958.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20220916224115958&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;MVC架构&lt;strong&gt;工作流程：&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;（1）用户通过 View 页面向服务端提出请求，可以是表单请求、超链接请求、AJAX 请求等
+（2）服务端 Controller 控制器接收到请求后对请求进行解析，找到相应的 Model 对用户请求进行处理
+（3）Model 处理后，将处理结果再交给 Controller
+（4）Controller 在接到处理结果后，根据处理结果找到要作为向客户端发回的响应 View 页面。页面经渲染（数据填充）后，再&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;三层架构和MVC架构的关联&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/image-20220916221013452.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20220916221013452&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;在当下前后端分离的主流趋势下，MVC架构进行不断的改进，但其中数据与视图分离的思想是一直受用的。&lt;/p&gt;
+&lt;p&gt;可以简单的认为前后端分离将View从后端中分离了出来交给前端处理，即浏览器发送Ajax请求，然后服务端接受该请求并返回JSON数据返回给浏览器，最后在浏览器中进行界面渲染。&lt;/p&gt;
+&lt;p&gt;即如图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/image-20220916224709575.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20220916224709575&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;单体架构的优点与瓶颈&#34;&gt;单体架构的优点与瓶颈&lt;/h3&gt;
+&lt;p&gt;对于小型系统——即由单台机器就足以支撑其良好运行的系统，单体不仅易于开发、易于测试、易于部署，且由于系统中各个功能、模块、方法的调用过程都是进程内调用，不会发生&lt;a class=&#34;link&#34; href=&#34;https://zh.wikipedia.org/wiki/%e8%a1%8c%e7%a8%8b%e9%96%93%e9%80%9a%e8%a8%8a&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;进程间通信&lt;/a&gt;（Inter-Process Communication，IPC。广义上讲，可以认为 RPC 属于 IPC 的一种特例，这里两个“PC”不是同个单词的缩写），因此也是运行效率最高的一种架构风格。&lt;/p&gt;
+&lt;p&gt;只有基于软件的性能需求超过了单机，软件的开发人员规模明显超过了“&lt;a class=&#34;link&#34; href=&#34;https://wiki.mbalib.com/wiki/%e4%b8%a4%e4%b8%aa%e6%8a%ab%e8%90%a8%e5%8e%9f%e5%88%99&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;2 Pizza Team&lt;/a&gt;的&amp;quot;大型的单体架构系统&amp;quot;才能更明显的体现出单体架构的瓶颈。&lt;/p&gt;
+&lt;p&gt;在“&lt;strong&gt;拆分&lt;/strong&gt;”这方面，单体系统的真正缺陷不在如何拆分，而在拆分之后的&lt;strong&gt;隔离与自治能力&lt;/strong&gt;上的欠缺。由于所有代码都运行在同一个进程空间之内，所有模块、方法的调用都无须考虑网络分区、对象复制这些麻烦的事和性能损失。获得了进程内调用的简单、高效等好处的同时，也意味着如果任何一部分代码出现了缺陷，过度消耗了进程空间内的资源，所造成的影响也是全局性的、难以隔离的。譬如内存泄漏、线程爆炸、阻塞、死循环等问题，都将会影响整个程序，而不仅仅是影响某一个功能、模块本身的正常运作。如果消耗的是某些更高层次的公共资源，譬如端口号或者数据库连接池泄漏，影响还将会波及整台机器，甚至是集群中其他单体副本的正常工作。&lt;/p&gt;
+&lt;p&gt;同样，由于所有代码都共享着同一个进程空间，不能隔离，也就很难做到单独停止、更新、升级某一部分代码，因为不可能有“停掉半个进程，重启 1/4 个程序”这样不合逻辑的操作，所以从可维护性来说，单体系统也是不占优势的。程序升级、修改缺陷往往需要制定专门的停机更新计划，做灰度发布、A/B 测试也相对更复杂。&lt;/p&gt;
+&lt;p&gt;由于隔离能力的缺失，单体除了难以阻断错误传播、不便于动态更新程序以外，还面临难以技术异构的困难，每个模块的代码都通常需要使用一样的程序语言，乃至一样的编程框架去开发。&lt;/p&gt;
+&lt;p&gt;为了允许程序出错，为了获得隔离、自治的能力，为了可以技术异构等目标，是继为了性能与算力之后，让程序选择分布式又一个理由。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;集群与分布式架构&#34;&gt;集群与分布式架构&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;从追求“尽量不出错”，到正视“出错是必然”&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;集群&lt;/strong&gt;（cluster）就是&lt;strong&gt;一组计算机&lt;/strong&gt;，它们作为一个整体向用户提供一组网络资源，这些单个的计算机系统就是集群的节点（node）。集群提供了以下关键的特性。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;**可扩展性。**集群的性能不限于单一的服务实体，新的服务实体可以动态的加入到集群，从而增强集群的性能。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;**高可用性。**集群通过服务实体冗余使客户端免于轻易遭遇到“out of service”警告。当一台节点服务器发生故障的时候，这台服务器上所运行的应用程序将在另一节点服务器上被自动接管。消除单点故障对于增强数据可用性、可达性和可靠性是非常重要的。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;**负载均衡。**负载均衡能把任务比较均匀的分布到集群环境下的计算和网络资源，以便提高数据吞吐量。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;**错误恢复。**如果集群中的某一台服务器由于故障或者维护需要而无法使用，资源和应用程序将转移到可用的集群节点上。这种由于某个节点中的资源不能工作，另一个可用节点中的资源能够透明的接管并继续完成任务的过程叫做错误恢复。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;一个比较典型的例子，由Nginx负载的多web节点集群架构。&lt;/p&gt;
+&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/image-20220916231514901.png&#34; alt=&#34;image-20220916231514901&#34; style=&#34;zoom: 80%;&#34; /&gt;
+&lt;p&gt;&lt;strong&gt;分布式系统&lt;/strong&gt;是&lt;strong&gt;一组计算机&lt;/strong&gt;，透过网络相互连接传递消息与通信后并协调它们的行为而形成的系统。组件之间彼此进行交互以实现一个共同的目标。&lt;/p&gt;
+&lt;p&gt;分布式与集群的联系与区别如下：&lt;/p&gt;
+&lt;p&gt;(一) 分布式是指将不同的业务分布在不同的地方。&lt;/p&gt;
+&lt;p&gt;(二) 而集群指的是将几台服务器集中在一起，实现同一业务。&lt;/p&gt;
+&lt;p&gt;(三) 分布式的每一个节点，都可以做集群，而集群并不一定就是分布式的。而分布式，从狭义上理解，也与集群差不多，但是它的组织比较松散，不像集群，有一定组织性，一台服务器宕了，其他的服务器可以顶上来。分布式的每一个节点，都完成不同的业务，一个节点宕了，这个业务就不可访问了。&lt;/p&gt;
+&lt;h2 id=&#34;革命性质的探索---面向服务的架构soa&#34;&gt;革命性质的探索 - 面向服务的架构(SOA)&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;面向服务的架构是一次具体地、系统性地成功解决分布式服务主要问题的架构模式。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;垂直拆分与服务拆分&#34;&gt;垂直拆分与服务拆分&lt;/h3&gt;
+&lt;p&gt;在前面提到的各种将服务进行拆分方法，最终的效果都是单体的，每个最终运行的服务都是包含了所有功能的整体，这就会导致每个运行的服务中的任意应用出现问题时都会影响到整个服务，也就是前面提到的&lt;strong&gt;隔离与自治能力&lt;/strong&gt;上的欠缺。但是如果当某些应用相对独立，与其他应用没有直接交互的情况下（比如不同的报表生成业务应用），我们可以尝试将其进行&lt;strong&gt;垂直拆分&lt;/strong&gt;，将互不直接影响的应用搬到不同的进程上运行，这样，当某一应用发生问题之后，其爆炸半径不会直接波及到其他独立的正常运行的应用。但是老死不相往来的应用比较稀少，这种垂直拆分并没有太高的工程实践上的可行性。&lt;/p&gt;
+&lt;p&gt;但是既然可以根据应用把架构做垂直拆分，那么根据模块/职责对架构进行水平拆分并相互建立通信的方式是否有可行性呢？&lt;/p&gt;
+&lt;p&gt;按照这个思路，可以把原本包含了众多复杂逻辑的模块，按照功能但愿抽象成多个&lt;strong&gt;服务&lt;/strong&gt;，以服务为一等公民，并为服务之间的&lt;strong&gt;通信&lt;/strong&gt;定义标准，随后便演进出了&lt;strong&gt;SOA架构&lt;/strong&gt;的雏形。&lt;/p&gt;
+&lt;h3 id=&#34;再谈服务与通信标准&#34;&gt;再谈服务与通信标准&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;服务，是根据功能抽象出的概念。比如说，处理用户登录信息的认证服务，负责持久化存储数据的数据库服务，以及为了加快查询速度的缓存服务等&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;通讯标准，是服务之间通信的基石。没有实现定义好的通信标准，不同服务之间就不能相互调用，难以协作&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;为了服务之间更好的通信，有两个大的发展方向：中心化和去中心化。在历史的进程中，率先冲锋的便是中心化的模式。&lt;/p&gt;
+&lt;h3 id=&#34;soa-的野蛮生长&#34;&gt;SOA 的野蛮生长&lt;/h3&gt;
+&lt;p&gt;如图所示两种SOA发展中有代表性的SOA架构。当系统演化至事件驱动架构时，远程服务调用协议SOAP诞生了。此时“面向服务的架构”（Service Oriented Architecture，SOA）已经有了它登上软件架构舞台所需要的全部前置条件。许多巨头科技公司一起创立了&lt;a class=&#34;link&#34; href=&#34;http://www.oasis-opencsa.org/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Open CSA (opens new window)&lt;/a&gt;组织（Open Composite Services Architecture），这便是 SOA 的官方管理机构。OpenCAS制定了一系列精密严谨成体系的基础平台与技术组件，从技术可行性上 SOA 成功地解决了分布式环境下出现的主要技术问题。&lt;/p&gt;
+&lt;p&gt;不同的服务间采用 SOAP 作为远程调用的协议，利用一个被称为&lt;a class=&#34;link&#34; href=&#34;https://zh.wikipedia.org/zh-hans/%e4%bc%81%e4%b8%9a%e6%9c%8d%e5%8a%a1%e6%80%bb%e7%ba%bf&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;企业服务总线 (opens new window)&lt;/a&gt;（Enterprise Service Bus，ESB）的消息管道来实现各个子系统之间的通信交互，初次之外还定义了很多其他的组件严谨的解决了多方面的问题。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;C:\Users\25222\AppData\Roaming\Typora\typora-user-images\image-20220917001207883.png&#34; alt=&#34;image-20220917001207883&#34; style=&#34;zoom: 70%;&#34; /&gt; &lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/image-20220917001223202.png&#34; alt=&#34;image-20220917001223202&#34; style=&#34;zoom: 50%;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;但是，过于严格的规范定义带来过度的复杂性。而构建在 SOAP 基础之上的 ESB、BPM、SCA、SDO 等诸多上层建筑，进一步加剧了这种复杂性。过于精密的流程和理论也需要懂得复杂概念的专业人员才能够驾驭。最终很难作为一种具有广泛普适性的软件架构风格来推广。&lt;/p&gt;
+&lt;h2 id=&#34;遍地开花的时代---微服务架构&#34;&gt;遍地开花的时代 - 微服务架构&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;当SOA革命以最终无人问津的结局告终之时，去中心化的分布式方案在悄然生长，而去中心化的最终形态，就是&lt;strong&gt;微服务架构&lt;/strong&gt;。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;微服务是一种通过多个小型服务组合来构建单个应用的架构风格，这些服务围绕业务能力而非特定的技术标准来构建。各个服务可以采用不同的编程语言，不同的数据存储技术，运行在不同的进程之中。服务采取轻量级的通信机制和自动化的部署机制实现通信与运维。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;在微服务时代，以服务来划分团队工作，服务对应的开发团队有直接对服务运行质量负责的责任，也应该有着不受外界干预地掌控服务各个方面的权力，譬如选择与其他服务异构的技术来实现自己的服务。&lt;/p&gt;
+&lt;p&gt;微服务明确地提倡数据应该按领域分散管理、更新、维护、存储，在单体服务中，一个系统的各个功能模块通常会使用&lt;strong&gt;同一个数据库&lt;/strong&gt;，诚然中心化的存储天生就更容易避免一致性问题，但是，同一个数据实体在不同服务的视角里，它的抽象形态往往也是不同的。譬如，Bookstore 应用中的书本，在销售领域中关注的是价格，在仓储领域中关注的库存数量，在商品展示领域中关注的是书籍的介绍信息，如果作为中心化的存储，所有领域都必须修改和映射到同一个实体之中，这便使得不同的服务很可能会互相产生影响而丧失掉独立性。因此，服务拆分，数据库也进行拆分，松解服务之间的耦合，每个团队可以更专注于自身负责的业务，也分散减轻了数据库的访问压力。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/image-20220917101101513.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20220917101101513&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;微服务组件&#34;&gt;微服务组件&lt;/h3&gt;
+&lt;h4 id=&#34;注册中心&#34;&gt;注册中心&lt;/h4&gt;
+&lt;p&gt;注册中心可以说是微服务架构中的地址簿，它记录了服务和服务地址的映射关系，在分布式架构中，服务会注册到这里，当服务需要调用其他服务时，就在这里找到服务的地址，进行调用。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;服务注册中心给客户端提供可供调用的服务列表，客户端在进行远程服务调用时，根据服务列表然后选择服务提供方的服务地址进行服务调用。服务注册中心在分布式系统中大量应用，是分布式系统中不可获取的组件。&lt;/li&gt;
+&lt;li&gt;注册中心是整个服务调用的核心部分，如果服务不存在注册中心，那么通过网关会调用不到，导致失败。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;配置中心&#34;&gt;配置中心&lt;/h4&gt;
+&lt;p&gt;管理各个环境的配置文件参数，比如说数据库，缓存，存储，业务应用并且支持管理每个不同的环境的配置。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;本地配置在服务启动加载，修改配置不需要重启服务&lt;/li&gt;
+&lt;li&gt;多个环境（dev，prod，sit，uat）容易混淆，会产生错误，导致服务运行异常&lt;/li&gt;
+&lt;li&gt;出现配置错误时，不容易回滚到指定的版本&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;api网关&#34;&gt;API网关&lt;/h4&gt;
+&lt;p&gt;API网关是微服务架构中提供路由转发与鉴权等功能，首先，它会提供最基本的&lt;strong&gt;路由&lt;/strong&gt;服务，将客户端请求转发后台业务服务；其次，作为一个入口，它还可以进行&lt;strong&gt;认证，鉴权，限流&lt;/strong&gt;等操作。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;客户端访问的统一对接接口&lt;/li&gt;
+&lt;li&gt;防止内部接口直接暴露给外部客户端（隐藏内部服务）&lt;/li&gt;
+&lt;li&gt;API网关通过提供一个额外的保护层来防止恶意攻击，例如SQL注入，XML解析器漏洞和拒绝服务&lt;/li&gt;
+&lt;li&gt;服务网关的前置过滤器中，所有请求过来进行权限校验&lt;/li&gt;
+&lt;li&gt;日志访问与审计&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;服务限流&#34;&gt;服务限流&lt;/h4&gt;
+&lt;p&gt;服务限流：指当系统资源不够的情况下，不足以应对大量的用户与数据接口请求时，为了保证优先的资源能够正常服务，因此对系统按照预设的规则进行流量限制或功能限制的一种方法。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;发生错误或者超时，不让调用接口，调用本地fallback（容错）&lt;/li&gt;
+&lt;li&gt;解决高并发请求，一旦达到规定请求，熔断，报错&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;链路跟踪&#34;&gt;链路跟踪&lt;/h4&gt;
+&lt;p&gt;调用链是整个分布式系统中跟踪一个用户请求的过程，包括数据采集，数据传输，数据存储，数据分析和数据可视化展示工具，也是微服务中代码的调试和服务监控的性能分析工具。&lt;/p&gt;
+&lt;p&gt;分布式web系统中，客户端的一次请求操作，可能需要经过系统中多个模块，多个中间件，多台机器的相互协作才能完成，并且这一系列调用请求中，有些是串行处理的，有些是并发执行的，那么如何确定客户端的一次操作背后调用了哪些应用，哪些模块，经过了哪些节点，每个模块的调用先后顺序是怎样的，每个模块的性能问题如何？随着业务系统模型的日趋复杂化，分布式系统中继续一套链路追踪（trace）系统来解决这些问题（快速定位）。&lt;/p&gt;
+&lt;h4 id=&#34;rpc调用&#34;&gt;RPC调用&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;RPC就是从一台机器（客户端）上通过参数传递的方式调用另一台机器（服务器）上的一个函数或方法（可以统称为服务）并得到返回的结果。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;RPC 会隐藏底层的通讯细节（不需要直接处理Socket通讯或Http通讯） RPC 是一个请求响应模型。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;客户端发起请求，服务器返回响应（类似于Http的工作方式） RPC 在使用形式上像调用本地函数（或方法）一样去调用远程的函数（或方法）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;微服务架构实例&#34;&gt;微服务架构实例&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/5e554428-f0e9-4b0d-a8a7-c18e18f5280a.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;烂大街的谷粒商城项目&lt;/p&gt;
+&lt;h2 id=&#34;云计算与云原生&#34;&gt;云计算与云原生&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;如今被炒的火热的云计算和云原生到底是什么&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;虚拟化与容器技术&#34;&gt;虚拟化与容器技术&lt;/h3&gt;
+&lt;p&gt;因为不同的应用或者程序可能并不适用于同一个系统中，理想状态下可以每台服务器用于一个特定的任务或者应用程序，但问题是，但多数服务器在运行计算时只会使用他们整体处理能力的一小部分，不能充分利用服务器的处理能力。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;虚拟化&lt;/strong&gt;就解决了这个问题，将多台服务器整合到一台服务器中，运行多个虚拟环境，每个VM都有自己的操作系统（这些操作系统可以是不同的），可以在其上安装应用程序。&lt;/p&gt;
+&lt;p&gt;虚拟机的设计原理彼此间是隔离的，并且与虚拟主机隔离，这意味着一个应用程序中的安全问题不会影响在另一个虚拟机中运行的另一个应用程序。同样，如果一个应用程序崩溃并需要重新启动服务器，那么可以重新启动它的VM，而不影响任何其他VM的运行。此外虚拟化还有利于可扩展性，VM是以计算机文件的形式存在的，因此这个文件可以很容易地通过网络(甚至通过存储介质)复制或移动到新的虚拟主机上，也就有了更强的可移植性。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/image-20220917101659810.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20220917101659810&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;但是虚拟机模拟了整个操作系统，而这层操作系统往往都是可以通用的，即VM的操作相对更重，将操作系统复制了多份造成了一些不必要的开销，一台服务器中可以运行的虚拟机数量比较有限。&lt;/p&gt;
+&lt;p&gt;于是，可以共享操作系统的&lt;strong&gt;容器技术&lt;/strong&gt;登上了舞台&lt;/p&gt;
+&lt;p&gt;与虚拟化相反，容器主机需要运行自己的操作系统以及容器系统。容器由单个应用程序（或微服务）以及需要运行的其他重要文件组成，利用容器主机的操作系统内核、二进制文件和库来运行。这些共享文件作为只读文件公开给容器。在容器主机上运行的其他容器也共享主机的内核、二进制文件和库。容器技术的核心（以Docker为例），主要基于Linux内核提供资源操作，进行资源隔离(namespace)、资源分配控制(Cgroup)、镜像的制作与加载(UnionFS)。&lt;/p&gt;
+&lt;p&gt;由于容器比虚拟机“轻”得多，并且启动速度也快得多，这也使得它们成为运行微服务的理想工具，当对微服务的需求扩大时，可以启用容器，当需求减少时可以删除。它们也可以在公有云和私有云以及传统数据中心之间轻松移动。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/image-20220917105601758.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20220917105601758&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;虚拟机与容器&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;由于多个容器之间使用的还是同一个宿主机的操作系统内核，因此导致了容器与虚拟机之间存在一些重要区别：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;容器比虚拟机小得多或“轻”得多，通常由几兆字节组成，并且所需的硬件资源也少得多。这意味着一台物理服务器可以承载的容器比虚拟机要多得多。&lt;/li&gt;
+&lt;li&gt;容器可以在几秒甚至几毫秒内启动。相比之下，虚拟机的启动时间比较长。&lt;/li&gt;
+&lt;li&gt;由于容器都共享其主机的操作系统，因此所有应用程序都必须在同一操作系统上运行。相比之下，运行在虚拟主机上的虚拟机可以运行不同的操作系统（例如Linux，Unix和Windows）。&lt;/li&gt;
+&lt;li&gt;使用容器时，只需要对容器主机的操作系统进行补丁和更新。而虚拟机则需对每个操作系统都进行补丁和更新。&lt;/li&gt;
+&lt;li&gt;如果一个容器导致容器主机的操作系统崩溃，则在该主机上运行的所有容器都将失败。&lt;/li&gt;
+&lt;li&gt;容器主机的操作系统内核中的安全漏洞将影响其所托管的所有容器。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;容器技术也是虚拟化技术的子类&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;容器编排工具&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;当应用服务的数量不断增加，部署的容器数量开始变的庞大，一个应用数十乃至数百个松散结合的容器式组件构成，而这些组件需要通过相互间的协同合作。这时对单独组件和应用层的工作进行组织的流程的&lt;strong&gt;容器编排管理系统&lt;/strong&gt;也有了存在的必要。Docker Swarm、Apache Mesos 和 Kubernetes 也随之登上舞台。&lt;/p&gt;
+&lt;h3 id=&#34;云计算的蓬勃&#34;&gt;云计算的蓬勃&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;云计算&lt;/strong&gt;：即通过网络按需提供可动态伸缩的廉价计算资源服务。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;计算资源的层次划分&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;第一层次&lt;/strong&gt;，是最底层的硬件资源，主要包括CPU（计算资源），硬盘（存储资源），还有网卡（网络资源）等。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;第二层次&lt;/strong&gt;，要高级一些，用户不直接使用硬件资源，而是使用云厂商直接提供配置好底层环境的各类中间服务，如负载均衡服务、数据库服务、对象存储服务、缓存服务等&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;第三层次&lt;/strong&gt;，更高级一些，用户直接使用厂商提供的专门的垂直软件应用服务，不需要关注底层的架构与实现细节，做到真正开箱即用的软件服务&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;以上三个层次的划分，对应了云计算中的三个重要概念&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;IaaS&lt;/strong&gt;: Infrastructure-as-a-Service（基础设施即服务）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;PaaS&lt;/strong&gt;: Platform-as-a-Service（平台即服务）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;SaaS&lt;/strong&gt;: Software-as-a-Service（软件即服务）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/image-20220917114504059.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20220917114504059&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;云原生时代的到来&#34;&gt;云原生时代的到来&lt;/h3&gt;
+&lt;p&gt;云原生，实际是云原生计算的简称，它是云计算发展到现在的这一种形态。&lt;/p&gt;
+&lt;p&gt;云原生技术可以为企业在公有云、私有云、混合云等新型的动态环境中，构建和运行&lt;strong&gt;可弹性拓展&lt;/strong&gt;的应用提供了可能。&lt;/p&gt;
+&lt;p&gt;云原生主要涉及四个大方面：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/image-20220917150755650.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20220917150755650&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;弹性资源&lt;/strong&gt;：基于虚拟化容器以及灵活的编排调度机制，可以为云服务体哦概念股快速扩缩容能力，而且极大程度地提高了物理资源的利用率。在这方面。**Kubernetes（k8s）**技术已经成为了行业的标准。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;微服务架构&lt;/strong&gt;：微服务也是云原生的重要基石之一。依托于功能单元解构，使得云服务具备了快速迭代的可能，业务得以循序发展；统一的通信标准能够帮助越来越多的组件加入到云原生的生态中，同时使得各组件之间的交互变得更容易。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;DevOps&lt;/strong&gt;：设计 =&amp;gt; 开发 =&amp;gt; 测试 =&amp;gt; 交付 =&amp;gt; 开发 =&amp;gt; 测试 =&amp;gt; 交付，自动化的流程使得软件的工作流程更高效，将微服务架构的优势进一步发挥。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;服务网格&lt;/strong&gt;：如果说微服务架构中最重要的进步，是将庞大的单体服务按照业务功能解耦开来，那么，服务网格的重要进步就是将业务逻辑于网络通信和治理解耦开来。业务不再需要关心异构系统中RPC中间件治理能力的不统一，这样使得复杂的治理能力成为可能&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;后微服务时代---云原生架构&#34;&gt;后微服务时代 - 云原生架构&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;从软件层面独力应对微服务架构问题，发展到软、硬一体，合力应对架构问题的时代，此即为云原生所引领的“后微服务时代”。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;all-in-kubernetes-&#34;&gt;All-in-Kubernetes ？&lt;/h3&gt;
+&lt;p&gt;微服务时代所取得的成就，本身就离不开以 Docker 为代表的早期容器化技术的巨大贡献。在早期的容时候器只被简单地视为一种可快速启动的服务运行环境，目的是方便程序的分发部署，这个阶段针对单个应用进行封装的容器并未真正参与到分布式问题的解决之中。&lt;/p&gt;
+&lt;p&gt;这个状况一直持续到2017 年，各个容器技术的公司，都主动或被迫纷纷支持起了 k8s 的集成， Kubernetes 赢得容器战争的胜利正式宣告结束。&lt;/p&gt;
+&lt;p&gt;在以往的架构演进中，许多软件解决的问题都有对应的硬件解决方案，如负载均衡问题可以不知负载均衡器，服务发现问题可以设置DNS服务器。通过配置硬件的方式，业务开发人员就可以不必过多关心由硬件直接解决的问题。但在微服务时代，人们选择在软件的代码层面而不是硬件的基础设施层面去解决复杂分布式问题，很大程度上是因为由硬件构成的基础设施，跟不上由软件构成的应用服务的灵活性的无奈之举。&lt;/p&gt;
+&lt;p&gt;在容器技术的发展之下，构建在Linux操作系统之上的K8S将底层的操作系统中的概念进一步封装，已经能够被看做一个可对容器调度分配控制的“&lt;strong&gt;云操作系统&lt;/strong&gt;”，在这个“云操作系统”的平台上，可以对服务发现、配置中心、服务网关、负载均衡、服务安全、跟踪监控提供的”基础设施层面“的解决方案。至此软件与硬件的界限便已经模糊。一旦虚拟化的硬件能够跟上软件的灵活性，那些与业务无关的技术性问题便有可能从软件层面剥离，悄无声息地解决于硬件基础设施之内，让软件得以只专注业务。&lt;/p&gt;
+&lt;h3 id=&#34;服务网格service-mesh&#34;&gt;&lt;strong&gt;服务网格(Service Mesh)&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Kubernetes 成为容器战争胜利者标志着后微服务时代的开端，但是 k8s 基础设施的解决方案仍有缺陷，甚至单从功能性上来看，全部依托于k8s 还不如基于Spring Cloud这些微服务框架的提供的方案，基础设施是针对整个容器来管理的，&lt;strong&gt;粒度相对粗旷&lt;/strong&gt;，只能到容器层面，对单个远程服务就很难有效管控。&lt;/p&gt;
+&lt;p&gt;举个例子，微服务 A 调用了微服务 B 的两个服务，称为 B1和 B2，假设 B1表现正常但 B2出现了持续的 500 错，那在达到一定阈值之后就应该对 B2进行熔断，以避免产生雪崩效应。如果仅在基础设施层面来处理，这会遇到一个两难问题，切断 A 到 B 的网络通路则会影响到 B1的正常调用，不切断的话则持续受 B2的错误影响。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/image-20220917184353467.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image-20220917184353467&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;为了解决这一类问题，虚拟化的基础设施很快完成了第二次进化，引入了今天被称为“&lt;strong&gt;服务网格&lt;/strong&gt;”（Service Mesh）的“边车代理模式”（Sidecar Proxy）&lt;/p&gt;
+&lt;p&gt;这个场景里指的具体含义是由系统自动在服务容器（通常是指 Kubernetes 的 Pod）中注入一个通信代理服务器，相当于那个挎斗，以类似网络安全里中间人攻击的方式进行流量劫持，在应用毫无感知的情况下，悄然接管应用所有&lt;strong&gt;对外通信&lt;/strong&gt;。这个代理除了实现正常的服务间通信外（称为数据平面通信），还接收来自控制器的指令（称为控制平面通信），根据控制平面中的配置，对数据平面通信的内容进行分析处理，以实现熔断、认证、度量、监控、负载均衡等各种附加功能。这样便实现了既不需要在应用层面加入额外的处理代码，也提供了几乎不亚于程序代码的精细管理能力。&lt;/p&gt;
+&lt;img src=&#34;https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/53cd62863ccdf3ca83c70eb4eeb96ee4.png&#34; alt=&#34;img&#34; style=&#34;zoom: 67%;&#34; /&gt;
+&lt;h2 id=&#34;探索中的serverless架构&#34;&gt;探索中的Serverless架构&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;如果说微服务架构是分布式系统这条路的极致，那无服务架构，也许就是“不分布式”的云端系统这条路的起点。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;人们研究分布式架构，最初是由于&lt;strong&gt;单台机器的性能无法满足系统的运行需要&lt;/strong&gt;，尽管在后来架构演进过程中，容错能力、技术异构、职责划分等各方面因素都成为架构需要考虑的问题，但其中获得更好性能的需求在架构设计中依然占很大的比重。对软件研发而言，不去做分布式无疑才是最简单的，如果单台服务器的性能可以是&lt;strong&gt;无限的&lt;/strong&gt;，那架构演进的结果肯定会与今天有很大的差别，分布式也好，容器化也好，微服务也好，恐怕都未必会如期出现，最起码不必一定是像今天这个样子。&lt;/p&gt;
+&lt;p&gt;真正的无限性能是肯定无法做到的，但是相对意义的无限性能已经成为了现实，依靠云原生提供的快速扩缩容能力，云厂商可以向我们提供一种我们可以认为是可靠的服务，让我们不去关心服务的性能问题。开发人员就可以专心于业务，只需要写好代码上传到云厂商提供的平台。这便是&lt;strong&gt;Serverless架构&lt;/strong&gt;（无服务），无服务指的更多的是一种不需要关注服务器的思维角度，专业的事”让专业的人做“，服务性能的保障完全交给云厂商。&lt;/p&gt;
+&lt;p&gt;除此之外无服务的架构还为云厂商和使用者提供了一种新的商业收费模式，即按量付费，可以根据资源占用量和占用时间进行收费，实现使用多少资源花多少钱。这使得资源的利用效率可以得到明显的提升。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;无服务&lt;/strong&gt;现在还没有一个特别权威的“官方”定义，但它的概念并没有前面各种架构那么复杂，本来无服务也是以“简单”为主要卖点的，它只涉及两块内容：后端设施（Backend）和函数（Function）。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;后端设施&lt;/strong&gt;是指数据库、消息队列、日志、存储，等等这一类用于支撑业务逻辑运行，但本身无业务含义的技术组件，这些后端设施都运行在云中，无服务中称其为“后端即服务”（Backend as a Service，BaaS）。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;函数&lt;/strong&gt;是指业务逻辑代码，这里函数的概念与粒度，都已经很接近于程序编码角度的函数了，其区别是无服务中的函数运行在云端，不必考虑算力问题，不必考虑容量规划（从技术角度可以不考虑，从计费的角度你的钱包够不够用还是要掂量一下的），无服务中称其为“函数即服务”（Function as a Service，FaaS）。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;无服务的愿景是让开发者只需要纯粹地关注业务，不需要考虑技术组件，后端的技术组件是现成的，可以直接取用，没有采购、版权和选型的烦恼；不需要考虑如何部署，部署过程完全是托管到云端的，工作由云端自动完成；不需要考虑算力，有整个数据中心支撑，算力可以认为是无限的；也不需要操心运维，维护系统持续平稳运行是云计算服务商的责任而不再是开发者的责任。&lt;/p&gt;
+&lt;p&gt;在当前阶段来看，无服务天生“无限算力”的假设决定了它必须要按使用量（函数运算的时间和占用的内存）计费以控制消耗算力的规模，因而函数不会一直以活动状态常驻服务器，请求到了才会开始运行，这导致了函数不便依赖服务端状态，也导致了函数会有冷启动时间，响应的性能不可能太好（目前无服务的冷启动过程大概是在数十到百毫秒级别，对于 Java 这类启动性能差的应用，甚至能到接近秒的级别）。&lt;/p&gt;
+&lt;p&gt;serverless与”微服务“和”云原生“并不是迭代演进的关系，并不是说serverless就比前几种架构更先进，serverless目前还在发展的阶段，对无服务未来的发展仍应持谨慎乐观的态度。在未来也许分布式与非分布式的界限也会变得模糊，两条看似不同路线最终在云端的数据中心交汇。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;We can only see a short distance ahead, but we can see plenty there that needs to be done.&lt;/p&gt;
+&lt;p&gt;尽管目光所及之处，只是不远的前方，即使如此，依然可以看到那里有许多值得去完成的工作在等待我们。&lt;/p&gt;
+&lt;p&gt;—— Alan Turing ，1950&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;p&gt;​																																																							~END~&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

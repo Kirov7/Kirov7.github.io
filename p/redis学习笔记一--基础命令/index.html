@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='【Redis学习笔记】基础命令'>
+<title>Redis学习笔记(一)--基础命令</title>
+
+<link rel='canonical' href='https://Kirov7.github.io/p/redis%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B8%80--%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/'>
+
+<link rel="stylesheet" href="/scss/style.min.8191399262444ab68b72a18c97392f5349be20a1615d77445be51e974c144cff.css"><meta property='og:title' content='Redis学习笔记(一)--基础命令'>
+<meta property='og:description' content='【Redis学习笔记】基础命令'>
+<meta property='og:url' content='https://Kirov7.github.io/p/redis%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B8%80--%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/'>
+<meta property='og:site_name' content='枫阿雨&#39;s Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Redis' /><meta property='article:published_time' content='2022-02-17T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2022-02-17T00:00:00&#43;00:00'/><meta property='og:image' content='https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/redis-study.png' />
+<meta name="twitter:title" content="Redis学习笔记(一)--基础命令">
+<meta name="twitter:description" content="【Redis学习笔记】基础命令"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/redis-study.png' />
+    <link rel="shortcut icon" href="https://img-1307890592.cos.ap-chengdu.myqcloud.com/common%2Ficon.png" />
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-232146632-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_huda4b8bed965e70c74cf5fa7e4b4f3c06_1003367_300x0_resize_box_3.png" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🌏</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">枫阿雨&#39;s Blog</a></h1>
+            <h2 class="site-description">&lt;CrazyForCode&gt;</h2>
+        </div>
+    </header><ol class="social-menu">
+            
+                <li>
+                    <a 
+                        href='https://github.com/Kirov7'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/links/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>Links</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://Kirov7.github.io/en/" >English</option>
+                        
+                            <option value="https://Kirov7.github.io/" selected>中文</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>暗色模式</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#基本命令">基本命令</a>
+      <ol>
+        <li><a href="#通用命令">通用命令</a></li>
+      </ol>
+    </li>
+    <li><a href="#redis-常用的五种数据结构">Redis 常用的五种数据结构</a>
+      <ol>
+        <li><a href="#redis-数据类型---字符串">Redis 数据类型 - 字符串</a>
+          <ol>
+            <li><a href="#字符串结构应用类型">字符串结构应用类型</a></li>
+            <li><a href="#redis-字符串指令">Redis 字符串指令</a></li>
+          </ol>
+        </li>
+        <li><a href="#redis-数据类型---hash">Redis 数据类型 - hash</a>
+          <ol>
+            <li><a href="#hash应用场景">hash应用场景</a></li>
+            <li><a href="#redis-hash-命令">Redis Hash 命令</a></li>
+          </ol>
+        </li>
+        <li><a href="#redis-数据类型---list">Redis 数据类型 - List</a>
+          <ol>
+            <li><a href="#list-应用场景">List 应用场景</a></li>
+            <li><a href="#redis-list-命令">Redis List 命令</a></li>
+          </ol>
+        </li>
+        <li><a href="#redis-数据类型---set">Redis 数据类型 - Set</a>
+          <ol>
+            <li><a href="#redis-set-应用场景">Redis Set 应用场景</a></li>
+            <li><a href="#redis-set-命令">Redis Set 命令</a></li>
+          </ol>
+        </li>
+        <li><a href="#redis-数据类型---zset">Redis 数据类型 - ZSet</a>
+          <ol>
+            <li><a href="#redis-zset-应用场景">Redis ZSet 应用场景</a></li>
+            <li><a href="#redis-zset-命令">Redis ZSet 命令</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#redis-开发规约">Redis 开发规约</a>
+      <ol>
+        <li><a href="#key-的设计">Key 的设计</a></li>
+        <li><a href="#不同类型的应用场景">不同类型的应用场景</a></li>
+        <li><a href="#redis-的安全建议">Redis 的安全建议</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/redis%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B8%80--%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/">
+                
+                    <img src="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/redis-study.png" loading="lazy" alt="Featured image of post Redis学习笔记(一)--基础命令" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/redis/" >
+                Redis
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/redis%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%B8%80--%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4/">Redis学习笔记(一)--基础命令</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            【Redis学习笔记】基础命令
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Feb 17, 2022</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 4 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="redis-基础">Redis 基础</h1>
+<h2 id="基本命令">基本命令</h2>
+<h3 id="通用命令">通用命令</h3>
+<ul>
+<li>
+<p><font color=red><strong>select</strong></font></p>
+<p>示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="k">select</span> <span class="m">0</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 选择0号数据库</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>keys</strong></font></p>
+<p>示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">keys he*
+</span></span><span class="line"><span class="cl">keys he<span class="o">[</span>h-l<span class="o">]</span>*
+</span></span><span class="line"><span class="cl">keys ph?
+</span></span><span class="line"><span class="cl"><span class="c1"># 根据Pattern表达式查询符合条件的Key</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 注意：不要在生产环境中使用，会阻塞线程</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>dbsize</strong></font></p>
+<p>示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">dbsize
+</span></span><span class="line"><span class="cl"><span class="c1"># 返回key的总数</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>exists</strong></font></p>
+<p>示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">exists a
+</span></span><span class="line"><span class="cl"><span class="c1"># 查询key=a是否存在</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>del</strong></font></p>
+<p>示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">del a
+</span></span><span class="line"><span class="cl"><span class="c1"># 删除key=a的数据</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>expire</strong></font></p>
+<p>示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">expire hello <span class="m">20</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 设置key=hello 在20s后过期</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>ttl</strong></font></p>
+<p>示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">ttl hello
+</span></span><span class="line"><span class="cl"><span class="c1"># 查看key=a的过期剩余时间</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>flashdb</strong></font></p>
+<p>示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">flashdb
+</span></span><span class="line"><span class="cl"><span class="c1"># 清空当前数据库中的所有数据</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>flashall</strong></font></p>
+<p>示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">flashall
+</span></span><span class="line"><span class="cl"><span class="c1"># 删除所有数据库中的所有数据</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h2 id="redis-常用的五种数据结构">Redis 常用的五种数据结构</h2>
+<h3 id="redis-数据类型---字符串">Redis 数据类型 - 字符串</h3>
+<p>value可以是字符串，可以是数字，可以是位数字</p>
+<p>String最大512MB，建议单个KV不超过100KB</p>
+<h4 id="字符串结构应用类型">字符串结构应用类型</h4>
+<ol>
+<li>缓存</li>
+<li>秒杀</li>
+<li>分布式锁</li>
+<li>配置中心</li>
+<li>对象序列化</li>
+<li>计数器</li>
+</ol>
+<h4 id="redis-字符串指令">Redis 字符串指令</h4>
+<ul>
+<li>
+<p><font color=red><strong>get</strong></font></p>
+<p>示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">get hello
+</span></span><span class="line"><span class="cl"><span class="c1"># 获得key=hello的结果</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>set</strong></font></p>
+<p>示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">set</span> hello world
+</span></span><span class="line"><span class="cl"><span class="c1"># 设置key=hello , value=world</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>mset /  mget</strong></font></p>
+<p>示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">mset hello world java best
+</span></span><span class="line"><span class="cl">mget hello java
+</span></span><span class="line"><span class="cl"><span class="c1"># 一次性 设置 或者 获取 多个kv</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>getset</strong></font></p>
+<p>示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">setget db mongodb
+</span></span><span class="line"><span class="cl"><span class="c1"># 设置新值返回旧值，若没有旧值则返回null并赋予新值</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>setnx</strong></font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">setnx job programmer
+</span></span><span class="line"><span class="cl">setnx job farmer <span class="c1"># 执行失败</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 指定key不存在时设置，若存在则不设置</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>del</strong></font></p>
+<p>示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">del hello
+</span></span><span class="line"><span class="cl"><span class="c1"># 删除key=hello的数据</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>incr / decr</strong></font></p>
+<p>示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">incr count
+</span></span><span class="line"><span class="cl">decr count
+</span></span><span class="line"><span class="cl"><span class="c1"># key值 自增 / 自减 1</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>incrby / decrby</strong></font></p>
+<p>示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">incrby count <span class="m">99</span>
+</span></span><span class="line"><span class="cl">decrby count <span class="m">99</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># key值 自增 / 自减 指定步长</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h3 id="redis-数据类型---hash">Redis 数据类型 - hash</h3>
+<p>Redis hash 是一个 string 类型的 field (字段) 和 value (值) 的映射表，hash 特别适合用于存储对象。Redis 中<strong>每个 hash</strong> 可以存储 2^32^ -1 个键值对（40多亿）。可以理解为每个key存储了一个HashMap对象，通过一个Key可以保存一个数据结构。</p>
+<h4 id="hash应用场景">hash应用场景</h4>
+<p>Hash用于存储结构化数据，比如员工i谢谢你，用户信息等等</p>
+<h4 id="redis-hash-命令">Redis Hash 命令</h4>
+<ul>
+<li>
+<p><font color=red><strong>hset</strong></font></p>
+<p>示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">hset myhash field <span class="s2">&#34;foo&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 设置单个hash字值段</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>hmset</strong></font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">hmset myhash field1 <span class="s2">&#34;hello&#34;</span> field2 <span class="s2">&#34;world&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 设置多个hash字值段</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>hget</strong></font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">hget myhash field1
+</span></span><span class="line"><span class="cl"><span class="c1"># 提取一个redis的key的某个哈希值</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>hgetall</strong></font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">hgetall myhash
+</span></span><span class="line"><span class="cl"><span class="c1"># 提取一个redis的key的所有哈希值，以键/n值/n的形式返回</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>hexists</strong></font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">hexists myhash field
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>hdel</strong></font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">hdel myhash field1 filed2
+</span></span><span class="line"><span class="cl"><span class="c1"># 删除n条记录</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>hval</strong></font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">hval myhash
+</span></span><span class="line"><span class="cl"><span class="c1"># 返回hash的value的列表，key不存在返回空表</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h3 id="redis-数据类型---list">Redis 数据类型 - List</h3>
+<p>List列表是简单的字符串列表，按照插入顺序排序。可以添加元素到列表的头部（左边）或者尾部（右边）</p>
+<p>一个列表最多可以包含 2^32^-1个元素</p>
+<h4 id="list-应用场景">List 应用场景</h4>
+<p>保存有需数据队列，例如：排行榜ID队列 / XX购物车商品ID队列 / XX班级ID队列</p>
+<p>获取到ID队列后，再根据每一个ID获取对应的HASH对象</p>
+<h4 id="redis-list-命令">Redis List 命令</h4>
+<ul>
+<li>
+<p><font color=red><strong>rpush</strong></font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">rpush listkey c b a
+</span></span><span class="line"><span class="cl"><span class="c1"># 在队尾插入新数据</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>lpush</strong></font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">lpush listkey f e d
+</span></span><span class="line"><span class="cl"><span class="c1"># 在队首插入新数据</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>lrange</strong></font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">lrange listkey <span class="m">0</span> -1
+</span></span><span class="line"><span class="cl"><span class="c1"># d e f c b a</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 获取所有</span>
+</span></span><span class="line"><span class="cl">lrange listkey <span class="m">0</span> <span class="m">2</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># d e f</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 获取队列数据</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>rpop</strong></font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">rpop listkey
+</span></span><span class="line"><span class="cl"><span class="c1"># a</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 从右侧弹出数据</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>lpop</strong></font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">lpop listkey
+</span></span><span class="line"><span class="cl"><span class="c1"># d</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 从左侧弹出数据</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h3 id="redis-数据类型---set">Redis 数据类型 - Set</h3>
+<p>Redis 的 Set 是 String 类型的<strong>无序</strong>集合。集合成员是唯一的，即不会存在重复的数据</p>
+<p>Redis 中 Set 集合是通过 哈希表 实现的，故添加、删除。查找的复杂度都是O(1)，对Set操作的执行效率极高</p>
+<p>集合中的最大成员数为 2^32^-1 个元素</p>
+<h4 id="redis-set-应用场景">Redis Set 应用场景</h4>
+<p>Set数据类型常用于交际 / 并集 / 差集 运算</p>
+<p>典型场景为：</p>
+<ul>
+<li>我与XX位好友共同关注了XXX</li>
+<li>将两个数据源的数据清单进行合并</li>
+<li>找出X与Y集合的差异</li>
+<li>抽奖活动</li>
+</ul>
+<h4 id="redis-set-命令">Redis Set 命令</h4>
+<ul>
+<li>
+<p><font color=red><strong>sadd</strong></font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sadd user:1:follow fay
+</span></span><span class="line"><span class="cl">sadd user:1:follow kirov faye harry
+</span></span><span class="line"><span class="cl"><span class="c1"># 新增set数据</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>smembers</strong></font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">smembers user:1:follow 
+</span></span><span class="line"><span class="cl"><span class="c1"># fay harry faye kirov (不保证顺序)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 查看set数据</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>srandmember</strong></font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">srandmember user:1:follow <span class="m">2</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># fay kirov (不保证顺序,不改变原集合中的顺序)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>spop</strong></font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">spop user:1:follow
+</span></span><span class="line"><span class="cl"><span class="c1"># fay (随机且改变原集合)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 随机弹出一个元素</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>sdiff</strong></font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sdiff user:2:follow user:1:follow
+</span></span><span class="line"><span class="cl"><span class="c1"># sports ent news</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># sdiff计算的是以左侧Set为基准，查找在右侧Set不存在的条目</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>sinter</strong></font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sinter user:1:follow user:2:follow
+</span></span><span class="line"><span class="cl"><span class="c1"># 计算交集</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>sunion</strong></font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sunion user:1:follow user:2:follow
+</span></span><span class="line"><span class="cl"><span class="c1"># 计算并集</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h3 id="redis-数据类型---zset">Redis 数据类型 - ZSet</h3>
+<p>Redis 的 ZSet 是 String 类型的<strong>有序</strong>Set集合。集合成员是唯一的，即不会存在重复的数据</p>
+<p>ZSet 和 List 的区别</p>
+<p>List 强调数据是按存储顺序有序排列，存储顺序与迭代顺序是一致的</p>
+<p>ZSet 则是给出分数进行排序，存储顺序与迭代顺序是不一致的</p>
+<h4 id="redis-zset-应用场景">Redis ZSet 应用场景</h4>
+<p>各种多维度排行榜</p>
+<h4 id="redis-zset-命令">Redis ZSet 命令</h4>
+<ul>
+<li>
+<p><font color=red><strong>zadd</strong></font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">zadd player:ranke <span class="m">1000</span> fay <span class="m">900</span> kirov <span class="m">800</span> pinkman <span class="m">600</span> grovy
+</span></span><span class="line"><span class="cl"><span class="c1"># 新增数据</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>zrange</strong></font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">zrange player:rank <span class="m">0</span> -1
+</span></span><span class="line"><span class="cl"><span class="c1"># grovy pinkman kirov fay</span>
+</span></span><span class="line"><span class="cl">zrange player:rank <span class="m">0</span> -1 with scores
+</span></span><span class="line"><span class="cl"><span class="c1"># grovy 600 pinkman 800 kirov 900 fay 1000 (将分值一并写出)</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 根据分值从小到大进行排列</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>zscore</strong></font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">zscore play:rank fay
+</span></span><span class="line"><span class="cl"><span class="c1"># 获取分数</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>zrank</strong></font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">zrank play:rank fay
+</span></span><span class="line"><span class="cl"><span class="c1"># 获取排名</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>zrevrank</strong></font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">zrank play:rank fay
+</span></span><span class="line"><span class="cl"><span class="c1"># 反向排名</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>zrevrange</strong></font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">zrevrange player:rank <span class="m">0</span> -1
+</span></span><span class="line"><span class="cl">zrevrange player:rank <span class="m">0</span> -1 with scores
+</span></span><span class="line"><span class="cl"><span class="c1"># 反向排序</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>zrem</strong></font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">zrem play:rank grovy
+</span></span><span class="line"><span class="cl"><span class="c1"># 移除指定元素</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>zcount</strong></font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">zcount player:rank <span class="m">700</span> <span class="m">1000</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 3</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 获取符合分数要求数据量</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><font color=red><strong>zrangebyscore</strong></font></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">zrangebyscore player:rank <span class="m">700</span> <span class="m">1000</span> wiht scores
+</span></span><span class="line"><span class="cl"><span class="c1"># pinkman 800 kirov 900 fay 1000</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h2 id="redis-开发规约">Redis 开发规约</h2>
+<h3 id="key-的设计">Key 的设计</h3>
+<p><img src="https://img-1307890592.cos.ap-chengdu.myqcloud.com/image-20220413002604596.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220413002604596"
+	
+	
+></p>
+<h3 id="不同类型的应用场景">不同类型的应用场景</h3>
+<p><img src="https://img-1307890592.cos.ap-chengdu.myqcloud.com/image-20220413002627850.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="image-20220413002627850"
+	
+	
+></p>
+<h3 id="redis-的安全建议">Redis 的安全建议</h3>
+<ul>
+<li>Redis 不要在外网被访问，禁止：bind 0.0.0.0
+<ul>
+<li>- bind 192.168.132.128</li>
+</ul>
+</li>
+<li>更改 Redis 端口，不要6379
+<ul>
+<li>port : 8838</li>
+</ul>
+</li>
+<li>Redis 使用非 root 启动</li>
+<li>Redis 没有设置密码或者弱密码，不要与登陆密码相同
+<ul>
+<li>requirepass 与 masterauth</li>
+</ul>
+</li>
+<li>定期备份，save 命令</li>
+<li>配置号 Linux 防火墙规则</li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/redis/">Redis</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.css"integrity="sha256-J&#43;iAE0sgH8QSz9hpcDxXIftnj65JEZgNhGcgReTTK9s="crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/katex.min.js"integrity="sha256-InsNdER1b2xUewP&#43;pKCUJpkhiqwHgqiPXDlIk7GzBu4="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.15.6/dist/contrib/auto-render.min.js"integrity="sha256-y39Mpg7V3D4lhBX4x6O0bUqTV4pSrfgwEfGKfxkOdgI="crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="has-image">
+    <a href="/p/redis%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E4%BA%8C--%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-sds%E5%92%8C%E9%93%BE%E8%A1%A8/">
+        
+        
+            <div class="article-image">
+                
+                    <img src="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/redis-study.png" loading="lazy" data-key="" data-hash="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/redis-study.png"/>
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Redis学习笔记(二)--底层数据结构 SDS和链表</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    <script src="https://utteranc.es/client.js" 
+        repo="Kirov7/Blog-comment"
+        issue-term="pathname"
+        
+        label="none"
+        
+        crossorigin="anonymous"
+        async
+        >
+</script>
+
+<style>
+    .utterances {
+        max-width: unset;
+    }
+</style>
+
+<script>
+    function setUtterancesTheme(theme) {
+        let utterances = document.querySelector('.utterances iframe');
+        if (utterances) {
+            utterances.contentWindow.postMessage(
+                {
+                    type: 'set-theme',
+                    theme: `github-${theme}`
+                },
+                'https://utteranc.es'
+            );
+        }
+    }
+
+    addEventListener('message', event => {
+        if (event.origin !== 'https://utteranc.es') return;
+        setUtterancesTheme(document.documentElement.dataset.scheme)
+    });
+
+    window.addEventListener('onColorSchemeChange', (e) => {
+        setUtterancesTheme(e.detail)
+    })
+</script>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2022 - 
+        
+        2023 枫阿雨&#39;s Blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.16.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
