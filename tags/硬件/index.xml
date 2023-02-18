@@ -12,7 +12,7 @@
         <pubDate>Mon, 17 Oct 2022 00:00:00 +0000</pubDate>
         
         <guid>https://Kirov7.github.io/p/%E5%BF%AB%E8%AF%BB%E4%BA%86%E8%A7%A3hdd%E4%B8%8Essd%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/</guid>
-        <description>&lt;img src="http://120.48.87.191:8733/files/69.jpg" alt="Featured image of post 快读了解HDD与SSD的基本原理" /&gt;&lt;h1 id=&#34;快读了解hdd与ssd的基本原理&#34;&gt;快读了解HDD与SSD的基本原理&lt;/h1&gt;
+        <description>&lt;img src="https://img-1307890592.cos.ap-chengdu.myqcloud.com/typroa/20230218223854.png" alt="Featured image of post 快读了解HDD与SSD的基本原理" /&gt;&lt;h1 id=&#34;快读了解hdd与ssd的基本原理&#34;&gt;快读了解HDD与SSD的基本原理&lt;/h1&gt;
 &lt;p&gt;作为MIS专业的小弱鸡，对硬件组成的了解并不深入，而本人正在学习LSM-T结构的存储引擎，发现有些内容一定是要对硬件有所了解之后才能又更好的认知，比如在阅读了LSM-T的经典开山论文后，有了解到LSM-T结构化随机写为顺序写的特性，可以契合HDD的特点可以极大的加快磁盘写入的速度。而在Wiskey论文中，又提出了对SSD友好的KV分离式存储结构，并通过并行读取最大化发挥SSD的优势。逐渐意识到，在软件性能上再多的优化都是建立在硬件之上的，而底层硬件的改变可能对整体的性能产生极大的质变，所以，还是很有必要对存储硬件有些基本的学习与认知。&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;因为本人有尖端恐惧症，看电子元器件的针脚等精细尖锐的东西会产生比较强烈的生理不适感，故曾经发誓绝对不会去做硬件相关的东西 XD&lt;br&gt;
